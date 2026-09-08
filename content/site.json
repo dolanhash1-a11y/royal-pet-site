@@ -1,1 +1,10 @@
-{"name":"Royal Pet","location":"Грумінг-студія у Києві","phone":"+38 (000) 000-00-00","address":"м. Київ, вул. Прикладна, 10","instagram":"https://instagram.com","telegram":"https://t.me","primary_color":"#517064","accent_color":"#d98370"}
+{
+  "name": "Royal Pett",
+  "location": "Грумінг-студія у Києві",
+  "phone": "+38 (000) 000-00-00",
+  "address": "м. Київ, вул. Прикладна, 10",
+  "instagram": "https://instagram.com",
+  "telegram": "https://t.me",
+  "primary_color": "#517064",
+  "accent_color": "#d98370"
+}
