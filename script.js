@@ -16,6 +16,7 @@ async function loadJSON(file) {
   return response.json();
 }
 
+
 // ===============================
 // SETTINGS
 // ===============================
@@ -80,6 +81,7 @@ async function loadSiteSettings() {
   }
 }
 
+
 // ===============================
 // HOME
 // ===============================
@@ -110,6 +112,7 @@ async function loadHome() {
   }
 }
 
+
 // ===============================
 // SERVICES
 // ===============================
@@ -127,6 +130,7 @@ async function loadServices() {
     data.items.forEach(item => {
 
       const card = document.createElement("article");
+
       card.className = "service-card";
 
       card.innerHTML = `
@@ -150,6 +154,7 @@ async function loadServices() {
   }
 }
 
+
 // ===============================
 // PORTFOLIO
 // ===============================
@@ -167,42 +172,59 @@ async function loadPortfolio() {
     data.items.forEach(item => {
 
       if (item.image) {
-  const card = document.createElement("div");
-  card.className = "portfolio-card";
 
-  const img = document.createElement("img");
-  img.src = item.image.startsWith("/uploads/")
-  ? "." + item.image
-  : item.image;
-  img.alt = item.title || "Робота Royal Pet";
-  img.loading = "lazy";
+        const card = document.createElement("div");
 
-  card.appendChild(img);
+        card.className = "portfolio-card";
 
-  if (item.title) {
-    const title = document.createElement("h3");
-    title.textContent = item.title;
-    card.appendChild(title);
-  }
+        const img = document.createElement("img");
 
-  if (item.description) {
-    const description = document.createElement("p");
-    description.textContent = item.description;
-    card.appendChild(description);
-  }
+        img.src = item.image.startsWith("/uploads/")
+          ? "." + item.image
+          : item.image;
 
-  gallery.appendChild(card);
-}
+        img.alt = item.title || "Робота Royal Pet";
+
+        img.loading = "lazy";
+
+        card.appendChild(img);
+
+        if (item.title) {
+
+          const title = document.createElement("h3");
+
+          title.textContent = item.title;
+
+          card.appendChild(title);
+        }
+
+        if (item.description) {
+
+          const description = document.createElement("p");
+
+          description.textContent = item.description;
+
+          card.appendChild(description);
+        }
+
+        gallery.appendChild(card);
+      }
+
 
       if (item.video_url) {
+
         const link = document.createElement("a");
 
         link.href = item.video_url;
+
         link.target = "_blank";
+
         link.rel = "noopener noreferrer";
+
         link.className = "portfolio-video";
 
-        link.textContent = item.title || "Переглянути відео";
+        link.textContent =
+          item.title || "Переглянути відео";
 
         gallery.appendChild(link);
       }
@@ -213,6 +235,7 @@ async function loadPortfolio() {
     console.error("Помилка portfolio.json:", error);
   }
 }
+
 
 // ===============================
 // REVIEWS
@@ -231,6 +254,7 @@ async function loadReviews() {
     data.items.forEach(item => {
 
       const card = document.createElement("article");
+
       card.className = "review-card";
 
       const rating = Math.max(
@@ -243,9 +267,13 @@ async function loadReviews() {
           ${"★".repeat(rating)}
         </div>
 
-        <p>${escapeHTML(item.text || "")}</p>
+        <p>
+          ${escapeHTML(item.text || "")}
+        </p>
 
-        <strong>${escapeHTML(item.name || "")}</strong>
+        <strong>
+          ${escapeHTML(item.name || "")}
+        </strong>
       `;
 
       container.appendChild(card);
@@ -255,6 +283,8 @@ async function loadReviews() {
     console.error("Помилка reviews.json:", error);
   }
 }
+
+
 // ===============================
 // CONTACTS
 // ===============================
@@ -272,21 +302,34 @@ async function loadContacts() {
     });
 
     document.querySelectorAll("[data-contact-phone2]").forEach(el => {
+
       if (data.phone2) {
+
         el.textContent = data.phone2;
-        el.href = `tel:${data.phone2.replace(/[^\d+]/g, "")}`;
+
+        el.href =
+          `tel:${data.phone2.replace(/[^\d+]/g, "")}`;
+
       } else {
+
         el.style.display = "none";
       }
+
     });
 
     document.querySelectorAll("[data-contact-email]").forEach(el => {
+
       if (data.email) {
+
         el.textContent = data.email;
+
         el.href = `mailto:${data.email}`;
+
       } else {
+
         el.style.display = "none";
       }
+
     });
 
   } catch (error) {
@@ -323,6 +366,8 @@ async function loadSocial() {
     console.error("Помилка social.json:", error);
   }
 }
+
+
 // ===============================
 // HOURS
 // ===============================
@@ -364,18 +409,165 @@ async function loadHours() {
   }
 }
 
+
+// ===============================
+// BOOKING FORM → TELEGRAM
+// ===============================
+
+async function initBookingForm() {
+
+  const form =
+    document.getElementById("booking-form");
+
+  const message =
+    document.getElementById("form-message");
+
+  if (!form) return;
+
+
+  form.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+
+    const submitButton =
+      form.querySelector('button[type="submit"]');
+
+
+    if (submitButton) {
+
+      submitButton.disabled = true;
+
+      submitButton.textContent =
+        "Відправляємо...";
+    }
+
+
+    const formData =
+      new FormData(form);
+
+
+    const data = {
+
+      pet_name:
+        formData.get("pet_name") || "",
+
+      age:
+        formData.get("age") || "",
+
+      breed:
+        formData.get("breed") || "",
+
+      owner_contact:
+        formData.get("owner_contact") || "",
+
+      last_grooming:
+        formData.get("last_grooming") || "",
+
+      preferred_time:
+        formData.get("preferred_time") || "",
+
+      additional_services:
+        formData.get("additional_services") || "",
+
+      home_care:
+        formData.get("home_care") || "",
+
+      comment:
+        formData.get("comment") || ""
+
+    };
+
+
+    try {
+
+      const response = await fetch(
+        "https://royal-pet-telegram.dolanhash1.workers.dev",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify(data)
+        }
+      );
+
+
+      const result =
+        await response.json();
+
+
+      if (!response.ok || !result.success) {
+
+        throw new Error(
+          "Помилка відправлення"
+        );
+      }
+
+
+      if (message) {
+
+        message.textContent =
+          "✅ Дякуємо! Заявку отримано. Ми скоро зв’яжемося з вами.";
+      }
+
+
+      form.reset();
+
+
+    } catch (error) {
+
+      console.error(
+        "Помилка заявки:",
+        error
+      );
+
+
+      if (message) {
+
+        message.textContent =
+          "❌ Не вдалося відправити заявку. Спробуйте ще раз або зателефонуйте нам.";
+      }
+
+
+    } finally {
+
+      if (submitButton) {
+
+        submitButton.disabled = false;
+
+        submitButton.textContent =
+          "Надіслати заявку";
+      }
+
+    }
+
+  });
+
+}
+
+
 // ===============================
 // HTML SAFETY
 // ===============================
 
 function escapeHTML(value) {
+
   return String(value)
+
     .replaceAll("&", "&amp;")
+
     .replaceAll("<", "&lt;")
+
     .replaceAll(">", "&gt;")
+
     .replaceAll('"', "&quot;")
+
     .replaceAll("'", "&#039;");
 }
+
 
 // ===============================
 // MOBILE MENU
@@ -383,14 +575,19 @@ function escapeHTML(value) {
 
 function initMenu() {
 
-  const button = document.querySelector(".menu-button");
-  const nav = document.querySelector(".nav");
+  const button =
+    document.querySelector(".menu-button");
+
+  const nav =
+    document.querySelector(".nav");
 
   if (!button || !nav) return;
 
+
   button.addEventListener("click", () => {
 
-    const open = nav.classList.toggle("open");
+    const open =
+      nav.classList.toggle("open");
 
     button.setAttribute(
       "aria-expanded",
@@ -399,393 +596,39 @@ function initMenu() {
 
   });
 
-  document.querySelectorAll(".nav a").forEach(link => {
 
-    link.addEventListener("click", () => {
-      nav.classList.remove("open");
+  document.querySelectorAll(".nav a")
+    .forEach(link => {
+
+      link.addEventListener("click", () => {
+
+        nav.classList.remove("open");
+
+      });
+
     });
 
-  });
 }
 
-// ===============================
-// BOOKING FORM
-// ===============================
 
-// BOOKING FORM
-// BOOKING FORM
-<form
-        id="booking-form"
-        class="booking-form">
-
-        <label>
-
-          🐶 Ім’я улюбленця
-
-          <input
-            name="pet_name"
-            required
-            placeholder="Наприклад, Боня">
-
-        </label>
-
-
-        <label>
-
-          🎂 Вік улюбленця
-
-          <input
-            name="age"
-            required
-            placeholder="Наприклад, 3 роки">
-
-        </label>
-
-
-        <label>
-
-          Порода та розмір
-
-          <input
-            name="breed"
-            placeholder="Наприклад, шпіц, малий">
-
-        </label>
-
-
-        <label>
-
-          📲 Ім’я та номер телефону власника
-
-          <input
-            name="owner_contact"
-            required
-            placeholder="Олена, +380…">
-
-        </label>
-
-
-        <label>
-
-          ✂️ Коли востаннє були на грумінгу?
-
-          <input
-            name="last_grooming"
-            required
-            placeholder="Наприклад, 2 місяці тому">
-
-        </label>
-
-
-        <label>
-
-          Бажана дата й час
-
-          <input
-            type="datetime-local"
-            name="preferred_time">
-
-        </label>
-
-
-        <label class="full">
-
-          💬 Які додаткові послуги бажаєте додати?
-
-          <textarea
-            name="additional_services"
-            rows="3"
-            placeholder="Наприклад, чистка зубів, креативна стрижка"></textarea>
-
-        </label>
-
-
-        <fieldset class="full">
-
-          <legend>
-            🧴 Домашній догляд
-          </legend>
-
-          <label>
-
-            <input
-              type="radio"
-              name="home_care"
-              value="Хочу придбати домашній догляд"
-              required>
-
-            Хочу придбати домашній догляд
-
-          </label>
-
-
-          <label>
-
-            <input
-              type="radio"
-              name="home_care"
-              value="Вже маю свою косметику">
-
-            Вже маю свою косметику
-
-          </label>
-
-
-          <label>
-
-            <input
-              type="radio"
-              name="home_care"
-              value="Поки не цікавить">
-
-            Поки не цікавить
-
-          </label>
-
-        </fieldset>
-
-
-        <label class="full">
-
-          Коментар або особливості улюбленця
-
-          <textarea
-            name="comment"
-            rows="3"
-            placeholder="Побажання та особливості…"></textarea>
-
-        </label>
-
-
-        <button
-          class="button full"
-          type="submit">
-
-          Надіслати заявку
-
-        </button>
-
-
-        <p
-          class="form-message full"
-          id="form-message"
-          aria-live="polite">
-        </p>
-
-      </form>
-
-    </section>
-
-
-    <!-- =========================
-         CONTACTS
-    ========================== -->
-
-    <section
-      class="section contact"
-      id="contacts"
-      aria-labelledby="contacts-title">
-
-      <div>
-
-        <p class="eyebrow">
-          Контакти
-        </p>
-
-        <h2 id="contacts-title">
-          Завітайте до нас
-        </h2>
-
-
-        <p data-contact-text>
-          Зв’яжіться з нами, щоб записати
-          улюбленця на грумінг.
-        </p>
-
-
-        <p>
-
-          <span data-site-address>
-            м. Київ, вул. Прикладна, 10
-          </span>
-
-          <br>
-
-          <span>
-            Понеділок:
-          </span>
-
-          <span data-hours-monday>
-            09:00–19:00
-          </span>
-
-        </p>
-
-
-        <a
-          data-site-phone
-          href="tel:+380000000000">
-
-          +38 (000) 000-00-00
-
-        </a>
-
-      </div>
-
-
-      <div class="contact-actions">
-
-        <a
-          class="button"
-          data-site-instagram
-          href="#"
-          target="_blank"
-          rel="noreferrer">
-
-          Написати в Instagram
-
-        </a>
-
-
-        <a
-          class="outline-button"
-          data-site-telegram
-          href="#"
-          target="_blank"
-          rel="noreferrer">
-
-          Написати в Telegram
-
-        </a>
-
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         WORKING HOURS
-    ========================== -->
-
-    <section
-      class="section"
-      aria-labelledby="hours-title">
-
-      <div class="section-heading">
-
-        <div>
-
-          <p class="eyebrow">
-            Графік роботи
-          </p>
-
-          <h2 id="hours-title">
-            Коли ми працюємо
-          </h2>
-
-        </div>
-
-      </div>
-
-
-      <div class="benefits">
-
-        <article>
-          <h3>Понеділок</h3>
-          <p data-hours-monday>09:00–19:00</p>
-        </article>
-
-        <article>
-          <h3>Вівторок</h3>
-          <p data-hours-tuesday>09:00–19:00</p>
-        </article>
-
-        <article>
-          <h3>Середа</h3>
-          <p data-hours-wednesday>09:00–19:00</p>
-        </article>
-
-        <article>
-          <h3>Четвер</h3>
-          <p data-hours-thursday>09:00–19:00</p>
-        </article>
-
-        <article>
-          <h3>П’ятниця</h3>
-          <p data-hours-friday>09:00–19:00</p>
-        </article>
-
-        <article>
-          <h3>Субота</h3>
-          <p data-hours-saturday>10:00–18:00</p>
-        </article>
-
-        <article>
-          <h3>Неділя</h3>
-          <p data-hours-sunday>Вихідний</p>
-        </article>
-
-      </div>
-
-    </section>
-
-  </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer>
-
-    <a class="logo" href="#home">
-
-      <span>✦</span>
-
-      <span data-site-name>
-        Royal Pet
-      </span>
-
-    </a>
-
-
-    <p>
-      Догляд, який ваш улюбленець відчує.
-    </p>
-
-
-    <p>
-
-      ©️
-
-      <span id="year"></span>
-
-      <span data-site-name>
-        Royal Pet
-      </span>
-
-    </p>
-
-  </footer>
-
-
-  <script src="script.js"></script>
-
-</body>
-</html>
 // ===============================
 // YEAR
 // ===============================
 
 function initYear() {
 
-  const year = document.getElementById("year");
+  const year =
+    document.getElementById("year");
 
   if (year) {
-    year.textContent = new Date().getFullYear();
+
+    year.textContent =
+      new Date().getFullYear();
+
   }
 
 }
+
 
 // ===============================
 // START
@@ -793,21 +636,25 @@ function initYear() {
 
 async function initSite() {
 
-  await loadSiteSettings();
+  await Promise.all([
 
-  await loadHome();
+    loadSiteSettings(),
 
-  await loadServices();
+    loadHome(),
 
-  await loadPortfolio();
+    loadServices(),
 
-  await loadReviews();
+    loadPortfolio(),
 
-  await loadContacts();
+    loadReviews(),
 
-  await loadSocial();
+    loadContacts(),
 
-  await loadHours();
+    loadSocial(),
+
+    loadHours()
+
+  ]);
 
   initMenu();
 
@@ -816,5 +663,6 @@ async function initSite() {
   initYear();
 
 }
+
 
 initSite();
