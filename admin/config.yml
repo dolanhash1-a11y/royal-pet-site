@@ -2,7 +2,7 @@ backend:
   name: github
   repo: dolanhash1-a11y/dolanhash1-a11y.github.io
   branch: main
-  base_url: BASE_URL_ВАШОГО_CLOUDFLARE_WORKER
+  base_url: https://royal-pet-admin-login.dolanhash1.workers.dev
   auth_endpoint: auth
 media_folder: "uploads"
 public_folder: "/uploads"
