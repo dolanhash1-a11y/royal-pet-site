@@ -237,7 +237,74 @@ async function loadReviews() {
     console.error("Помилка reviews.json:", error);
   }
 }
+// ===============================
+// CONTACTS
+// ===============================
 
+async function loadContacts() {
+  try {
+    const data = await loadJSON("content/contacts.json");
+
+    document.querySelectorAll("[data-contact-title]").forEach(el => {
+      el.textContent = data.title || "";
+    });
+
+    document.querySelectorAll("[data-contact-text]").forEach(el => {
+      el.textContent = data.text || "";
+    });
+
+    document.querySelectorAll("[data-contact-phone2]").forEach(el => {
+      if (data.phone2) {
+        el.textContent = data.phone2;
+        el.href = `tel:${data.phone2.replace(/[^\d+]/g, "")}`;
+      } else {
+        el.style.display = "none";
+      }
+    });
+
+    document.querySelectorAll("[data-contact-email]").forEach(el => {
+      if (data.email) {
+        el.textContent = data.email;
+        el.href = `mailto:${data.email}`;
+      } else {
+        el.style.display = "none";
+      }
+    });
+
+  } catch (error) {
+    console.error("Помилка contacts.json:", error);
+  }
+}
+
+
+// ===============================
+// SOCIAL NETWORKS
+// ===============================
+
+async function loadSocial() {
+  try {
+    const data = await loadJSON("content/social.json");
+
+    document.querySelectorAll("[data-social-instagram]").forEach(el => {
+      el.href = data.instagram || "#";
+    });
+
+    document.querySelectorAll("[data-social-telegram]").forEach(el => {
+      el.href = data.telegram || "#";
+    });
+
+    document.querySelectorAll("[data-social-facebook]").forEach(el => {
+      el.href = data.facebook || "#";
+    });
+
+    document.querySelectorAll("[data-social-tiktok]").forEach(el => {
+      el.href = data.tiktok || "#";
+    });
+
+  } catch (error) {
+    console.error("Помилка social.json:", error);
+  }
+}
 // ===============================
 // HOURS
 // ===============================
@@ -378,6 +445,10 @@ async function initSite() {
   await loadPortfolio();
 
   await loadReviews();
+
+  await loadContacts();
+
+  await loadSocial();
 
   await loadHours();
 
