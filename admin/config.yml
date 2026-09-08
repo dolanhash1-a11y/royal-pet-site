@@ -4,50 +4,358 @@ backend:
   branch: main
   base_url: https://royal-pet-admin-login.dolanhash1.workers.dev
   auth_endpoint: auth
+
 media_folder: "uploads"
 public_folder: "/uploads"
+
+locale: "uk"
+
 collections:
-  - name: "settings"
-    label: "Налаштування сайту"
+
+  # =========================
+  # ОСНОВНА ІНФОРМАЦІЯ
+  # =========================
+
+  - name: "site"
+    label: "⚙️ Основна інформація"
     files:
-      - label: "Назва, контакти й кольори"
-        name: "site"
+
+      - name: "site"
+        label: "Налаштування сайту"
         file: "content/site.json"
+
         fields:
-          - {label: "Назва студії", name: "name", widget: "string"}
-          - {label: "Місто / підзаголовок", name: "location", widget: "string"}
-          - {label: "Телефон", name: "phone", widget: "string"}
-          - {label: "Адреса", name: "address", widget: "string"}
-          - {label: "Instagram", name: "instagram", widget: "string", required: false}
-          - {label: "Telegram", name: "telegram", widget: "string", required: false}
-          - {label: "Основний колір", name: "primary_color", widget: "color", default: "#517064"}
-          - {label: "Акцентний колір", name: "accent_color", widget: "color", default: "#d98370"}
-  - name: "portfolio"
-    label: "Портфоліо"
+
+          - label: "Назва студії"
+            name: "name"
+            widget: "string"
+
+          - label: "Місто / підзаголовок"
+            name: "location"
+            widget: "string"
+
+          - label: "Телефон"
+            name: "phone"
+            widget: "string"
+
+          - label: "Адреса"
+            name: "address"
+            widget: "string"
+
+          - label: "Instagram"
+            name: "instagram"
+            widget: "string"
+            required: false
+
+          - label: "Telegram"
+            name: "telegram"
+            widget: "string"
+            required: false
+
+          - label: "Основний колір"
+            name: "primary_color"
+            widget: "color"
+
+          - label: "Акцентний колір"
+            name: "accent_color"
+            widget: "color"
+
+
+  # =========================
+  # ГОЛОВНА СТОРІНКА
+  # =========================
+
+  - name: "home"
+    label: "🏠 Головна сторінка"
     files:
-      - label: "Фото та відео робіт"
-        name: "works"
-        file: "content/portfolio.json"
+
+      - name: "home"
+        label: "Контент головної"
+        file: "content/home.json"
+
         fields:
+
+          - label: "Заголовок"
+            name: "title"
+            widget: "string"
+
+          - label: "Підзаголовок"
+            name: "subtitle"
+            widget: "string"
+
+          - label: "Опис"
+            name: "description"
+            widget: "text"
+
+          - label: "Текст кнопки"
+            name: "button_text"
+            widget: "string"
+
+          - label: "Посилання кнопки"
+            name: "button_link"
+            widget: "string"
+
+
+  # =========================
+  # ПОСЛУГИ
+  # =========================
+
+  - name: "services"
+    label: "✂️ Послуги та ціни"
+    files:
+
+      - name: "services"
+        label: "Послуги"
+        file: "content/services.json"
+
+        fields:
+
+          - label: "Список послуг"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.title}} — {{fields.price}}"
+
+            fields:
+
+              - label: "Назва послуги"
+                name: "title"
+                widget: "string"
+
+              - label: "Ціна"
+                name: "price"
+                widget: "string"
+
+              - label: "Опис"
+                name: "description"
+                widget: "text"
+                required: false
+
+
+  # =========================
+  # ПОРТФОЛІО
+  # =========================
+
+  - name: "portfolio"
+    label: "🖼️ Портфоліо"
+    files:
+
+      - name: "portfolio"
+        label: "Роботи"
+        file: "content/portfolio.json"
+
+        fields:
+
           - label: "Роботи"
             name: "items"
             widget: "list"
+            summary: "{{fields.title}}"
+
             fields:
-              - {label: "Назва", name: "title", widget: "string"}
-              - {label: "Фото", name: "image", widget: "image", required: false}
-              - {label: "Посилання на відео", name: "video_url", widget: "string", required: false}
-              - {label: "Опис", name: "description", widget: "text", required: false}
-  - name: "pages"
-    label: "Сторінки"
+
+              - label: "Назва"
+                name: "title"
+                widget: "string"
+
+              - label: "Фото"
+                name: "image"
+                widget: "image"
+                required: false
+
+              - label: "Посилання на відео"
+                name: "video_url"
+                widget: "string"
+                required: false
+
+              - label: "Опис"
+                name: "description"
+                widget: "text"
+                required: false
+
+
+  # =========================
+  # ВІДГУКИ
+  # =========================
+
+  - name: "reviews"
+    label: "⭐ Відгуки"
     files:
-      - label: "Нові сторінки"
-        name: "pages"
-        file: "content/pages.json"
+
+      - name: "reviews"
+        label: "Відгуки клієнтів"
+        file: "content/reviews.json"
+
         fields:
+
+          - label: "Відгуки"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.name}} — {{fields.rating}}/5"
+
+            fields:
+
+              - label: "Ім'я"
+                name: "name"
+                widget: "string"
+
+              - label: "Оцінка"
+                name: "rating"
+                widget: "number"
+                value_type: "int"
+                min: 1
+                max: 5
+                default: 5
+
+              - label: "Текст відгуку"
+                name: "text"
+                widget: "text"
+
+              - label: "Фото"
+                name: "image"
+                widget: "image"
+                required: false
+
+
+  # =========================
+  # ГРАФІК РОБОТИ
+  # =========================
+
+  - name: "hours"
+    label: "🕐 Графік роботи"
+    files:
+
+      - name: "hours"
+        label: "Години роботи"
+        file: "content/hours.json"
+
+        fields:
+
+          - label: "Понеділок"
+            name: "monday"
+            widget: "string"
+
+          - label: "Вівторок"
+            name: "tuesday"
+            widget: "string"
+
+          - label: "Середа"
+            name: "wednesday"
+            widget: "string"
+
+          - label: "Четвер"
+            name: "thursday"
+            widget: "string"
+
+          - label: "П'ятниця"
+            name: "friday"
+            widget: "string"
+
+          - label: "Субота"
+            name: "saturday"
+            widget: "string"
+
+          - label: "Неділя"
+            name: "sunday"
+            widget: "string"
+
+
+  # =========================
+  # СТОРІНКИ
+  # =========================
+
+  - name: "pages"
+    label: "📄 Сторінки"
+
+    files:
+
+      - name: "pages"
+        label: "Сторінки сайту"
+        file: "content/pages.json"
+
+        fields:
+
           - label: "Сторінки"
             name: "items"
             widget: "list"
+            summary: "{{fields.title}}"
+
             fields:
-              - {label: "Назва в меню", name: "title", widget: "string"}
-              - {label: "Адреса латиницею", name: "slug", widget: "string", pattern: ['^[a-z0-9-]+$', 'Лише малі латинські літери, цифри та дефіс']}
-              - {label: "Текст сторінки", name: "body", widget: "markdown"}
+
+              - label: "Назва сторінки"
+                name: "title"
+                widget: "string"
+
+              - label: "Адреса сторінки"
+                name: "slug"
+                widget: "string"
+
+              - label: "Текст"
+                name: "body"
+                widget: "markdown"
+
+
+  # =========================
+  # КОНТАКТИ
+  # =========================
+
+  - name: "contacts"
+    label: "📞 Контакти"
+    files:
+
+      - name: "contacts"
+        label: "Контактна інформація"
+        file: "content/contacts.json"
+
+        fields:
+
+          - label: "Заголовок"
+            name: "title"
+            widget: "string"
+
+          - label: "Текст"
+            name: "text"
+            widget: "text"
+
+          - label: "Додатковий телефон"
+            name: "phone2"
+            widget: "string"
+            required: false
+
+          - label: "Email"
+            name: "email"
+            widget: "string"
+            required: false
+
+
+  # =========================
+  # СОЦІАЛЬНІ МЕРЕЖІ
+  # =========================
+
+  - name: "social"
+    label: "🔗 Соціальні мережі"
+    files:
+
+      - name: "social"
+        label: "Соціальні мережі"
+        file: "content/social.json"
+
+        fields:
+
+          - label: "Instagram"
+            name: "instagram"
+            widget: "string"
+            required: false
+
+          - label: "Telegram"
+            name: "telegram"
+            widget: "string"
+            required: false
+
+          - label: "Facebook"
+            name: "facebook"
+            widget: "string"
+            required: false
+
+          - label: "TikTok"
+            name: "tiktok"
+            widget: "string"
+            required: false
