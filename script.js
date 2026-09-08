@@ -412,28 +412,76 @@ function initMenu() {
 // BOOKING FORM
 // ===============================
 
-function initBookingForm() {
-
+// BOOKING FORM
+async function initBookingForm() {
   const form = document.getElementById("booking-form");
   const message = document.getElementById("form-message");
 
   if (!form) return;
 
-  form.addEventListener("submit", event => {
-
+  form.addEventListener("submit", async event => {
     event.preventDefault();
 
-    if (message) {
-      message.textContent =
-        "Дякуємо! Ми отримали вашу заявку та скоро зв’яжемося з вами.";
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Відправляємо...";
     }
 
-    form.reset();
+    const formData = new FormData(form);
 
+    const data = {
+      pet_name: formData.get("pet_name") || "",
+      age: formData.get("age") || "",
+      breed: formData.get("breed") || "",
+      owner_contact: formData.get("owner_contact") || "",
+      last_grooming: formData.get("last_grooming") || "",
+      preferred_date: formData.get("preferred_date") || "",
+      comment: formData.get("comment") || ""
+    };
+
+    try {
+      const response = await fetch(
+        "https://royal-pet-telegram.YOUR-SUBDOMAIN.workers.dev",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error("Помилка відправлення");
+      }
+
+      if (message) {
+        message.textContent =
+          "✅ Дякуємо! Заявку отримано. Ми скоро зв’яжемося з вами.";
+      }
+
+      form.reset();
+
+    } catch (error) {
+      console.error(error);
+
+      if (message) {
+        message.textContent =
+          "❌ Не вдалося відправити заявку. Спробуйте ще раз або зателефонуйте нам.";
+      }
+
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "Записатися";
+      }
+    }
   });
-
 }
-
 // ===============================
 // YEAR
 // ===============================
