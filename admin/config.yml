@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: dolanhash1-a11y/dolanhash1-a11y.github.io
+  repo: dolanhash1-a11y/royal-pet-site
   branch: main
   base_url: https://royal-pet-admin-login.dolanhash1.workers.dev
   auth_endpoint: auth
