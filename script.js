@@ -167,14 +167,30 @@ async function loadPortfolio() {
     data.items.forEach(item => {
 
       if (item.image) {
-        const img = document.createElement("img");
+  const card = document.createElement("div");
+  card.className = "portfolio-card";
 
-        img.src = item.image;
-        img.alt = item.title || "Робота Royal Pet";
-        img.loading = "lazy";
+  const img = document.createElement("img");
+  img.src = item.image;
+  img.alt = item.title || "Робота Royal Pet";
+  img.loading = "lazy";
 
-        gallery.appendChild(img);
-      }
+  card.appendChild(img);
+
+  if (item.title) {
+    const title = document.createElement("h3");
+    title.textContent = item.title;
+    card.appendChild(title);
+  }
+
+  if (item.description) {
+    const description = document.createElement("p");
+    description.textContent = item.description;
+    card.appendChild(description);
+  }
+
+  gallery.appendChild(card);
+}
 
       if (item.video_url) {
         const link = document.createElement("a");
