@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: dolanhash1-a11y/royal-pet-site
+  repo: dolanhash1-a11y/dolanhash1-a11y.github.io
   branch: main
   base_url: BASE_URL_ВАШОГО_CLOUDFLARE_WORKER
   auth_endpoint: auth
