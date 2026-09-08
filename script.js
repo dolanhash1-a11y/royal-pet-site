@@ -16,7 +16,6 @@ async function loadJSON(file) {
   return response.json();
 }
 
-
 // ===============================
 // SETTINGS
 // ===============================
@@ -27,39 +26,37 @@ async function loadSiteSettings() {
 
     document.title = `${data.name || "Royal Pet"} — грумінг-студія`;
 
-    // Назва
     document.querySelectorAll("[data-site-name]").forEach(el => {
       el.textContent = data.name || "";
     });
 
-    // Місто / підзаголовок
     document.querySelectorAll("[data-site-location]").forEach(el => {
       el.textContent = data.location || "";
     });
 
-    // Телефон
     document.querySelectorAll("[data-site-phone]").forEach(el => {
       el.textContent = data.phone || "";
       el.href = `tel:${(data.phone || "").replace(/[^\d+]/g, "")}`;
     });
 
-    // Адреса
     document.querySelectorAll("[data-site-address]").forEach(el => {
       el.textContent = data.address || "";
     });
 
-    // Instagram
     document.querySelectorAll("[data-site-instagram]").forEach(el => {
       el.href = data.instagram || "#";
     });
 
-    // Telegram
     document.querySelectorAll("[data-site-telegram]").forEach(el => {
       el.href = data.telegram || "#";
     });
 
-    // Кольори
     if (data.primary_color) {
+      document.documentElement.style.setProperty(
+        "--sage-dark",
+        data.primary_color
+      );
+
       document.documentElement.style.setProperty(
         "--primary",
         data.primary_color
@@ -67,6 +64,11 @@ async function loadSiteSettings() {
     }
 
     if (data.accent_color) {
+      document.documentElement.style.setProperty(
+        "--coral",
+        data.accent_color
+      );
+
       document.documentElement.style.setProperty(
         "--accent",
         data.accent_color
@@ -78,6 +80,75 @@ async function loadSiteSettings() {
   }
 }
 
+// ===============================
+// HOME
+// ===============================
+
+async function loadHome() {
+  try {
+    const data = await loadJSON("content/home.json");
+
+    document.querySelectorAll("[data-home-title]").forEach(el => {
+      el.textContent = data.title || "";
+    });
+
+    document.querySelectorAll("[data-home-subtitle]").forEach(el => {
+      el.textContent = data.subtitle || "";
+    });
+
+    document.querySelectorAll("[data-home-description]").forEach(el => {
+      el.textContent = data.description || "";
+    });
+
+    document.querySelectorAll("[data-home-button]").forEach(el => {
+      el.textContent = data.button_text || "";
+      el.href = data.button_link || "#";
+    });
+
+  } catch (error) {
+    console.error("Помилка home.json:", error);
+  }
+}
+
+// ===============================
+// SERVICES
+// ===============================
+
+async function loadServices() {
+  try {
+    const data = await loadJSON("content/services.json");
+
+    const container = document.querySelector("[data-services]");
+
+    if (!container || !data.items) return;
+
+    container.innerHTML = "";
+
+    data.items.forEach(item => {
+
+      const card = document.createElement("article");
+      card.className = "service-card";
+
+      card.innerHTML = `
+        <div class="service-card-top">
+          <h3>${escapeHTML(item.title || "")}</h3>
+          <strong>${escapeHTML(item.price || "")}</strong>
+        </div>
+
+        ${
+          item.description
+            ? `<p>${escapeHTML(item.description)}</p>`
+            : ""
+        }
+      `;
+
+      container.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Помилка services.json:", error);
+  }
+}
 
 // ===============================
 // PORTFOLIO
@@ -125,6 +196,101 @@ async function loadPortfolio() {
   }
 }
 
+// ===============================
+// REVIEWS
+// ===============================
+
+async function loadReviews() {
+  try {
+    const data = await loadJSON("content/reviews.json");
+
+    const container = document.querySelector("[data-reviews]");
+
+    if (!container || !data.items) return;
+
+    container.innerHTML = "";
+
+    data.items.forEach(item => {
+
+      const card = document.createElement("article");
+      card.className = "review-card";
+
+      const rating = Math.max(
+        1,
+        Math.min(5, Number(item.rating) || 5)
+      );
+
+      card.innerHTML = `
+        <div class="review-stars">
+          ${"★".repeat(rating)}
+        </div>
+
+        <p>${escapeHTML(item.text || "")}</p>
+
+        <strong>${escapeHTML(item.name || "")}</strong>
+      `;
+
+      container.appendChild(card);
+    });
+
+  } catch (error) {
+    console.error("Помилка reviews.json:", error);
+  }
+}
+
+// ===============================
+// HOURS
+// ===============================
+
+async function loadHours() {
+  try {
+    const data = await loadJSON("content/hours.json");
+
+    document.querySelectorAll("[data-hours-monday]").forEach(el => {
+      el.textContent = data.monday || "";
+    });
+
+    document.querySelectorAll("[data-hours-tuesday]").forEach(el => {
+      el.textContent = data.tuesday || "";
+    });
+
+    document.querySelectorAll("[data-hours-wednesday]").forEach(el => {
+      el.textContent = data.wednesday || "";
+    });
+
+    document.querySelectorAll("[data-hours-thursday]").forEach(el => {
+      el.textContent = data.thursday || "";
+    });
+
+    document.querySelectorAll("[data-hours-friday]").forEach(el => {
+      el.textContent = data.friday || "";
+    });
+
+    document.querySelectorAll("[data-hours-saturday]").forEach(el => {
+      el.textContent = data.saturday || "";
+    });
+
+    document.querySelectorAll("[data-hours-sunday]").forEach(el => {
+      el.textContent = data.sunday || "";
+    });
+
+  } catch (error) {
+    console.error("Помилка hours.json:", error);
+  }
+}
+
+// ===============================
+// HTML SAFETY
+// ===============================
+
+function escapeHTML(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
 
 // ===============================
 // MOBILE MENU
@@ -157,7 +323,6 @@ function initMenu() {
   });
 }
 
-
 // ===============================
 // BOOKING FORM
 // ===============================
@@ -184,7 +349,6 @@ function initBookingForm() {
 
 }
 
-
 // ===============================
 // YEAR
 // ===============================
@@ -199,7 +363,6 @@ function initYear() {
 
 }
 
-
 // ===============================
 // START
 // ===============================
@@ -208,7 +371,15 @@ async function initSite() {
 
   await loadSiteSettings();
 
+  await loadHome();
+
+  await loadServices();
+
   await loadPortfolio();
+
+  await loadReviews();
+
+  await loadHours();
 
   initMenu();
 
