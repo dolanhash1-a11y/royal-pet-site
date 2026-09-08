@@ -414,75 +414,365 @@ function initMenu() {
 
 // BOOKING FORM
 // BOOKING FORM
-async function initBookingForm() {
-  const form = document.getElementById("booking-form");
-  const message = document.getElementById("form-message");
+<form
+        id="booking-form"
+        class="booking-form">
 
-  if (!form) return;
+        <label>
 
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
+          🐶 Ім’я улюбленця
 
-    const submitButton = form.querySelector('button[type="submit"]');
+          <input
+            name="pet_name"
+            required
+            placeholder="Наприклад, Боня">
 
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = "Відправляємо...";
-    }
+        </label>
 
-    const formData = new FormData(form);
 
-    const data = {
-      pet_name: formData.get("pet_name") || "",
-      age: formData.get("age") || "",
-      breed: formData.get("breed") || "",
-      owner_contact: formData.get("owner_contact") || "",
-      last_grooming: formData.get("last_grooming") || "",
-      preferred_date: formData.get("preferred_date") || "",
-      comment: formData.get("comment") || ""
-    };
+        <label>
 
-    try {
-      const response = await fetch(
-        "https://royal-pet-telegram.dolanhash1.workers.dev",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(data)
-        }
-      );
+          🎂 Вік улюбленця
 
-      const result = await response.json();
+          <input
+            name="age"
+            required
+            placeholder="Наприклад, 3 роки">
 
-      if (!response.ok || !result.success) {
-        throw new Error("Помилка відправлення");
-      }
+        </label>
 
-      if (message) {
-        message.textContent =
-          "✅ Дякуємо! Заявку отримано. Ми скоро зв’яжемося з вами.";
-      }
 
-      form.reset();
+        <label>
 
-    } catch (error) {
-      console.error(error);
+          Порода та розмір
 
-      if (message) {
-        message.textContent =
-          "❌ Не вдалося відправити заявку. Спробуйте ще раз або зателефонуйте нам.";
-      }
+          <input
+            name="breed"
+            placeholder="Наприклад, шпіц, малий">
 
-    } finally {
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = "Записатися";
-      }
-    }
-  });
-}
+        </label>
+
+
+        <label>
+
+          📲 Ім’я та номер телефону власника
+
+          <input
+            name="owner_contact"
+            required
+            placeholder="Олена, +380…">
+
+        </label>
+
+
+        <label>
+
+          ✂️ Коли востаннє були на грумінгу?
+
+          <input
+            name="last_grooming"
+            required
+            placeholder="Наприклад, 2 місяці тому">
+
+        </label>
+
+
+        <label>
+
+          Бажана дата й час
+
+          <input
+            type="datetime-local"
+            name="preferred_time">
+
+        </label>
+
+
+        <label class="full">
+
+          💬 Які додаткові послуги бажаєте додати?
+
+          <textarea
+            name="additional_services"
+            rows="3"
+            placeholder="Наприклад, чистка зубів, креативна стрижка"></textarea>
+
+        </label>
+
+
+        <fieldset class="full">
+
+          <legend>
+            🧴 Домашній догляд
+          </legend>
+
+          <label>
+
+            <input
+              type="radio"
+              name="home_care"
+              value="Хочу придбати домашній догляд"
+              required>
+
+            Хочу придбати домашній догляд
+
+          </label>
+
+
+          <label>
+
+            <input
+              type="radio"
+              name="home_care"
+              value="Вже маю свою косметику">
+
+            Вже маю свою косметику
+
+          </label>
+
+
+          <label>
+
+            <input
+              type="radio"
+              name="home_care"
+              value="Поки не цікавить">
+
+            Поки не цікавить
+
+          </label>
+
+        </fieldset>
+
+
+        <label class="full">
+
+          Коментар або особливості улюбленця
+
+          <textarea
+            name="comment"
+            rows="3"
+            placeholder="Побажання та особливості…"></textarea>
+
+        </label>
+
+
+        <button
+          class="button full"
+          type="submit">
+
+          Надіслати заявку
+
+        </button>
+
+
+        <p
+          class="form-message full"
+          id="form-message"
+          aria-live="polite">
+        </p>
+
+      </form>
+
+    </section>
+
+
+    <!-- =========================
+         CONTACTS
+    ========================== -->
+
+    <section
+      class="section contact"
+      id="contacts"
+      aria-labelledby="contacts-title">
+
+      <div>
+
+        <p class="eyebrow">
+          Контакти
+        </p>
+
+        <h2 id="contacts-title">
+          Завітайте до нас
+        </h2>
+
+
+        <p data-contact-text>
+          Зв’яжіться з нами, щоб записати
+          улюбленця на грумінг.
+        </p>
+
+
+        <p>
+
+          <span data-site-address>
+            м. Київ, вул. Прикладна, 10
+          </span>
+
+          <br>
+
+          <span>
+            Понеділок:
+          </span>
+
+          <span data-hours-monday>
+            09:00–19:00
+          </span>
+
+        </p>
+
+
+        <a
+          data-site-phone
+          href="tel:+380000000000">
+
+          +38 (000) 000-00-00
+
+        </a>
+
+      </div>
+
+
+      <div class="contact-actions">
+
+        <a
+          class="button"
+          data-site-instagram
+          href="#"
+          target="_blank"
+          rel="noreferrer">
+
+          Написати в Instagram
+
+        </a>
+
+
+        <a
+          class="outline-button"
+          data-site-telegram
+          href="#"
+          target="_blank"
+          rel="noreferrer">
+
+          Написати в Telegram
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         WORKING HOURS
+    ========================== -->
+
+    <section
+      class="section"
+      aria-labelledby="hours-title">
+
+      <div class="section-heading">
+
+        <div>
+
+          <p class="eyebrow">
+            Графік роботи
+          </p>
+
+          <h2 id="hours-title">
+            Коли ми працюємо
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="benefits">
+
+        <article>
+          <h3>Понеділок</h3>
+          <p data-hours-monday>09:00–19:00</p>
+        </article>
+
+        <article>
+          <h3>Вівторок</h3>
+          <p data-hours-tuesday>09:00–19:00</p>
+        </article>
+
+        <article>
+          <h3>Середа</h3>
+          <p data-hours-wednesday>09:00–19:00</p>
+        </article>
+
+        <article>
+          <h3>Четвер</h3>
+          <p data-hours-thursday>09:00–19:00</p>
+        </article>
+
+        <article>
+          <h3>П’ятниця</h3>
+          <p data-hours-friday>09:00–19:00</p>
+        </article>
+
+        <article>
+          <h3>Субота</h3>
+          <p data-hours-saturday>10:00–18:00</p>
+        </article>
+
+        <article>
+          <h3>Неділя</h3>
+          <p data-hours-sunday>Вихідний</p>
+        </article>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <a class="logo" href="#home">
+
+      <span>✦</span>
+
+      <span data-site-name>
+        Royal Pet
+      </span>
+
+    </a>
+
+
+    <p>
+      Догляд, який ваш улюбленець відчує.
+    </p>
+
+
+    <p>
+
+      ©️
+
+      <span id="year"></span>
+
+      <span data-site-name>
+        Royal Pet
+      </span>
+
+    </p>
+
+  </footer>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
 // ===============================
 // YEAR
 // ===============================
