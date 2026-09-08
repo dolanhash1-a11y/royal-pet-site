@@ -171,7 +171,9 @@ async function loadPortfolio() {
   card.className = "portfolio-card";
 
   const img = document.createElement("img");
-  img.src = item.image;
+  img.src = item.image.startsWith("/uploads/")
+  ? "." + item.image
+  : item.image;
   img.alt = item.title || "Робота Royal Pet";
   img.loading = "lazy";
 
