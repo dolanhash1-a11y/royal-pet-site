@@ -1,0 +1,53 @@
+backend:
+  name: github
+  repo: dolanhash1-a11y/royal-pet-site
+  branch: main
+  base_url: BASE_URL_ВАШОГО_CLOUDFLARE_WORKER
+  auth_endpoint: auth
+media_folder: "uploads"
+public_folder: "/uploads"
+collections:
+  - name: "settings"
+    label: "Налаштування сайту"
+    files:
+      - label: "Назва, контакти й кольори"
+        name: "site"
+        file: "content/site.json"
+        fields:
+          - {label: "Назва студії", name: "name", widget: "string"}
+          - {label: "Місто / підзаголовок", name: "location", widget: "string"}
+          - {label: "Телефон", name: "phone", widget: "string"}
+          - {label: "Адреса", name: "address", widget: "string"}
+          - {label: "Instagram", name: "instagram", widget: "string", required: false}
+          - {label: "Telegram", name: "telegram", widget: "string", required: false}
+          - {label: "Основний колір", name: "primary_color", widget: "color", default: "#517064"}
+          - {label: "Акцентний колір", name: "accent_color", widget: "color", default: "#d98370"}
+  - name: "portfolio"
+    label: "Портфоліо"
+    files:
+      - label: "Фото та відео робіт"
+        name: "works"
+        file: "content/portfolio.json"
+        fields:
+          - label: "Роботи"
+            name: "items"
+            widget: "list"
+            fields:
+              - {label: "Назва", name: "title", widget: "string"}
+              - {label: "Фото", name: "image", widget: "image", required: false}
+              - {label: "Посилання на відео", name: "video_url", widget: "string", required: false}
+              - {label: "Опис", name: "description", widget: "text", required: false}
+  - name: "pages"
+    label: "Сторінки"
+    files:
+      - label: "Нові сторінки"
+        name: "pages"
+        file: "content/pages.json"
+        fields:
+          - label: "Сторінки"
+            name: "items"
+            widget: "list"
+            fields:
+              - {label: "Назва в меню", name: "title", widget: "string"}
+              - {label: "Адреса латиницею", name: "slug", widget: "string", pattern: ['^[a-z0-9-]+$', 'Лише малі латинські літери, цифри та дефіс']}
+              - {label: "Текст сторінки", name: "body", widget: "markdown"}
