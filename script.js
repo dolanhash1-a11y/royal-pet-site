@@ -413,6 +413,7 @@ function initMenu() {
 // ===============================
 
 // BOOKING FORM
+// BOOKING FORM
 async function initBookingForm() {
   const form = document.getElementById("booking-form");
   const message = document.getElementById("form-message");
@@ -443,7 +444,7 @@ async function initBookingForm() {
 
     try {
       const response = await fetch(
-        "https://royal-pet-telegram.YOUR-SUBDOMAIN.workers.dev",
+        "https://royal-pet-telegram.dolanhash1.workers.dev",
         {
           method: "POST",
           headers: {
