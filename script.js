@@ -116,36 +116,23 @@ async function loadHome() {
 // ===============================
 // SERVICES
 // ===============================
-
 async function loadServices() {
   try {
     const data = await loadJSON("content/services.json");
-
     const container = document.querySelector("[data-services]");
-
     if (!container || !data.items) return;
-
     container.innerHTML = "";
-
-    const services = [...data.items]
+    const services = data.items
       .filter(item => item.active !== false)
-      .sort((a, b) => {
-        return (Number(a.order) || 0) - (Number(b.order) || 0);
-      });
-
+      .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
     services.forEach(item => {
-
       const card = document.createElement("article");
-
       card.className = "service-card";
-
       let imageHTML = "";
-
       if (item.image) {
         const imageSrc = item.image.startsWith("/uploads/")
           ? "." + item.image
           : item.image;
-
         imageHTML = `
           <div class="service-card-image">
             <img
@@ -156,42 +143,32 @@ async function loadServices() {
           </div>
         `;
       }
-
       const durationHTML = item.duration
         ? `<span class="service-duration">⏱️ ${escapeHTML(item.duration)}</span>`
         : "";
-
       const categoryHTML = item.category
         ? `<span class="service-category">${escapeHTML(item.category)}</span>`
         : "";
-
       card.innerHTML = `
         ${imageHTML}
-
         <div class="service-card-content">
-
           <div class="service-card-top">
             <h3>${escapeHTML(item.title || "")}</h3>
             <strong>${escapeHTML(item.price || "")}</strong>
           </div>
-
           ${
             item.description
               ? `<p>${escapeHTML(item.description)}</p>`
               : ""
           }
-
           <div class="service-card-meta">
             ${durationHTML}
             ${categoryHTML}
           </div>
-
         </div>
       `;
-
       container.appendChild(card);
     });
-
   } catch (error) {
     console.error("Помилка services.json:", error);
   }
