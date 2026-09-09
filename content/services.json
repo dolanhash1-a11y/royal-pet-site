@@ -39,6 +39,16 @@
       "image": "",
       "active": true,
       "order": 4
+    },
+    {
+      "active": true,
+      "order": 1,
+      "title": "Зубки",
+      "price": "100",
+      "duration": "2 години",
+      "category": "Гігієна",
+      "description": "истка зубів новітніми засобами",
+      "image": "/uploads/img_4725.jpg"
     }
   ]
 }
