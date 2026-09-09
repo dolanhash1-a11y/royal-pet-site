@@ -127,23 +127,66 @@ async function loadServices() {
 
     container.innerHTML = "";
 
-    data.items.forEach(item => {
+    const services = [...data.items]
+      .filter(item => item.active !== false)
+      .sort((a, b) => {
+        return (Number(a.order) || 0) - (Number(b.order) || 0);
+      });
+
+    services.forEach(item => {
 
       const card = document.createElement("article");
 
       card.className = "service-card";
 
-      card.innerHTML = `
-        <div class="service-card-top">
-          <h3>${escapeHTML(item.title || "")}</h3>
-          <strong>${escapeHTML(item.price || "")}</strong>
-        </div>
+      let imageHTML = "";
 
-        ${
-          item.description
-            ? `<p>${escapeHTML(item.description)}</p>`
-            : ""
-        }
+      if (item.image) {
+        const imageSrc = item.image.startsWith("/uploads/")
+          ? "." + item.image
+          : item.image;
+
+        imageHTML = `
+          <div class="service-card-image">
+            <img
+              src="${escapeHTML(imageSrc)}"
+              alt="${escapeHTML(item.title || "Послуга Royal Pet")}"
+              loading="lazy"
+            >
+          </div>
+        `;
+      }
+
+      const durationHTML = item.duration
+        ? `<span class="service-duration">⏱️ ${escapeHTML(item.duration)}</span>`
+        : "";
+
+      const categoryHTML = item.category
+        ? `<span class="service-category">${escapeHTML(item.category)}</span>`
+        : "";
+
+      card.innerHTML = `
+        ${imageHTML}
+
+        <div class="service-card-content">
+
+          <div class="service-card-top">
+            <h3>${escapeHTML(item.title || "")}</h3>
+            <strong>${escapeHTML(item.price || "")}</strong>
+          </div>
+
+          ${
+            item.description
+              ? `<p>${escapeHTML(item.description)}</p>`
+              : ""
+          }
+
+          <div class="service-card-meta">
+            ${durationHTML}
+            ${categoryHTML}
+          </div>
+
+        </div>
       `;
 
       container.appendChild(card);
@@ -153,8 +196,6 @@ async function loadServices() {
     console.error("Помилка services.json:", error);
   }
 }
-
-
 // ===============================
 // PORTFOLIO
 // ===============================
