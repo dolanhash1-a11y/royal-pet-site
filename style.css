@@ -725,3 +725,24 @@ body > footer .logo {
   transform: translateY(-2px);
   background: var(--sage);
 }
+/* ===============================
+   SERVICE CARD IMAGE
+   =============================== */
+.service-card-image {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+.service-card-image img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+/* На телефонах */
+@media (max-width: 600px) {
+  .service-card-image {
+    height: 180px;
+  }
+}
