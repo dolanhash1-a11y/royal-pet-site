@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Royal Pet — Особистий кабінет</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="login" class="login-screen">
+    <div class="login-card">
+      <img src="../assets/royal-pet-logo.svg" alt="Royal Pet" class="login-logo">
+      <div class="gold-label">ROYAL PET</div>
+      <h1>Особистий кабінет</h1>
+      <p>Керування записами, графіком та відгуками</p>
+      <form id="login-form">
+        <label>Логін<input id="login-user" autocomplete="username" required></label>
+        <label>Пароль<input id="login-pass" type="password" autocomplete="current-password" required></label>
+        <button class="gold-button" type="submit">Увійти</button>
+        <div id="login-error" class="error"></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><img src="../assets/royal-pet-logo.svg" alt="Royal Pet"><span>ROYAL PET</span></div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard">◈ <span>Огляд</span></button>
+        <button class="nav-item" data-view="appointments">▣ <span>Записи</span><b id="new-count">0</b></button>
+        <button class="nav-item" data-view="hours">◷ <span>Графік</span></button>
+        <button class="nav-item" data-view="reviews">★ <span>Відгуки</span></button>
+        <button class="nav-item" data-view="services">✂ <span>Послуги</span></button>
+      </nav>
+      <button id="logout" class="logout">Вийти</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div><span class="gold-label">ROYAL PET</span><h2 id="page-title">Огляд</h2></div><a href="../" class="site-link">Переглянути сайт ↗</a></header>
+      <div id="view-dashboard" class="view"></div>
+      <div id="view-appointments" class="view hidden"></div>
+      <div id="view-hours" class="view hidden"></div>
+      <div id="view-reviews" class="view hidden"></div>
+      <div id="view-services" class="view hidden"></div>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
