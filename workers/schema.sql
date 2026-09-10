@@ -14,9 +14,7 @@ CREATE TABLE IF NOT EXISTS appointments (
 );
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
 CREATE INDEX IF NOT EXISTS idx_appointments_time ON appointments(preferred_time);
-CREATE TABLE IF NOT EXISTS hours (
-  day TEXT PRIMARY KEY,
-  value TEXT NOT NULL
-);
-INSERT OR IGNORE INTO hours(day,value) VALUES
-('monday','09:00–19:00'),('tuesday','09:00–19:00'),('wednesday','09:00–19:00'),('thursday','09:00–19:00'),('friday','09:00–19:00'),('saturday','10:00–18:00'),('sunday','Вихідний');
+CREATE TABLE IF NOT EXISTS hours (day TEXT PRIMARY KEY,value TEXT NOT NULL);
+INSERT OR IGNORE INTO hours(day,value) VALUES ('monday','09:00–19:00'),('tuesday','09:00–19:00'),('wednesday','09:00–19:00'),('thursday','09:00–19:00'),('friday','09:00–19:00'),('saturday','10:00–18:00'),('sunday','Вихідний');
+CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT NOT NULL,rating INTEGER NOT NULL,text TEXT NOT NULL,reply TEXT DEFAULT '',status TEXT NOT NULL DEFAULT 'pending',created_at TEXT NOT NULL);
+INSERT OR IGNORE INTO reviews(id,name,rating,text,reply,status,created_at) VALUES ('demo-review','Анюта',5,'Дуже задоволена результатом!','','published',datetime('now'));
