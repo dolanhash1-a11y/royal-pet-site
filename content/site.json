@@ -1,12 +1,12 @@
 {
-  "name": "Royal Pet",
-  "location": "у Києві",
-  "phone": "+38 (000) 000-00-00",
-  "address": "м. Київ, вул. Прикладна, 10",
-  "instagram": "https://instagram.com",
   "telegram": "https://t.me",
   "facebook": "",
-  "tiktok": "",
-  "primary_color": "#89bb8b",
-  "accent_color": "#f26868"
+  "primary_color": "#000000",
+  "name": "Royal Pet",
+  "phone": "+38 (000) 000-00-00",
+  "accent_color": "#cfb900",
+  "instagram": "https://instagram.com",
+  "address": "м. Київ, вул. Прикладна, 10",
+  "location": "у Києві",
+  "tiktok": ""
 }
