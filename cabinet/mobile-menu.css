@@ -1,5 +1,6 @@
 #rp-mobile-menu{display:none}
 @media(max-width:520px){
+  body.rp-mobile-menu-lock{overflow:hidden}
   #rp-mobile-menu{display:block;position:relative;z-index:1000}
   .rp-mobile-menu-button{appearance:none;border:1px solid #3a3021;background:#111;color:#f1d48a;border-radius:10px;min-width:48px;height:44px;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:700;cursor:pointer}
   .rp-mobile-menu-icon{font-size:21px;line-height:1}
