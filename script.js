@@ -259,6 +259,7 @@ async function loadPortfolio() {
 // REVIEWS
 // ===============================
 
+```javascript
 async function loadReviews() {
   try {
     const data = await loadJSON("content/reviews.json");
@@ -269,7 +270,15 @@ async function loadReviews() {
 
     container.innerHTML = "";
 
-    data.items.forEach(item => {
+    const reviews = data.items.filter(item => {
+      // Старі відгуки без статусу залишаємо видимими
+      if (!item.status) return true;
+
+      // На сайті показуємо тільки опубліковані
+      return item.status === "published";
+    });
+
+    reviews.forEach(item => {
 
       const card = document.createElement("article");
 
@@ -292,6 +301,12 @@ async function loadReviews() {
         <strong>
           ${escapeHTML(item.name || "")}
         </strong>
+
+        ${
+          item.date
+            ? `<small class="review-date">${escapeHTML(item.date)}</small>`
+            : ""
+        }
       `;
 
       container.appendChild(card);
@@ -301,7 +316,7 @@ async function loadReviews() {
     console.error("Помилка reviews.json:", error);
   }
 }
-
+```
 
 // ===============================
 // CONTACTS
