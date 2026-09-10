@@ -2,12 +2,57 @@
 const API=(window.ROYAL_PET_ADMIN_API||'').replace(/\/$/,'');
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const money=v=>Number(v||0).toLocaleString('uk-UA');
-async function getAppointments(){const r=await fetch(API+'/appointments',{credentials:'include'});if(!r.ok)throw Error('Не вдалося отримати записи');return r.json()}
-function meta(x){try{const o=JSON.parse(x?.additional_services||'');return o&&typeof o==='object'&&!Array.isArray(o)?o:{}}catch{return{}}}
-function coat(v){return v==='light'?'Є ковтуни':v==='severe'?'Сильні ковтуни / запущена шерсть':'Нормальний стан'}
-function services(m){return Array.isArray(m.services)?m.services.map(v=>typeof v==='string'?v:v?.title).filter(Boolean):[]}
-function nav(v){document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view===v));const t=document.getElementById('page-title');if(t)t.textContent='Календар'}
-async function render(){const root=document.getElementById('view-calendar');if(!root)return;nav('calendar');root.innerHTML='<div class="card">Завантаження календаря…</div>';try{const a=await getAppointments(),now=new Date();now.setHours(0,0,0,0);const upcoming=a.filter(x=>x.status==='confirmed').filter(x=>{const d=new Date(x.preferred_time);return !isNaN(d)&&d>=now}).sort((p,q)=>new Date(p.preferred_time)-new Date(q.preferred_time));const groups={};upcoming.forEach(x=>{const d=new Date(x.preferred_time),key=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});(groups[key]??=[]).push(x)});root.innerHTML=`<div class="toolbar"><div><h3>Підтверджені записи</h3><span style="color:#aaa">${upcoming.length} майбутніх записів</span></div><button class="small-btn" id="calendar-refresh">Оновити</button></div>${upcoming.length?Object.entries(groups).map(([day,items])=>`<div class="calendar-day"><h3>${esc(day)}</h3><div class="calendar-list">${items.map(x=>{const m=meta(x),svc=services(m),price=m.final_price??m.estimated_total??'';const d=new Date(x.preferred_time);return `<div class="card calendar-item"><div class="calendar-time">${esc(d.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}))}</div><div><b>${esc(x.pet_name||'—')}</b><span>${esc(x.breed||'Без породи')}</span><span>${m.animal_type==='cat'?'Кіт':'Собака'} · ${esc(m.breed_category||'')}</span></div><div><b>${esc(x.owner_name||'—')}</b><span>${esc(x.owner_contact||'')}</span></div><div><span>${svc.length?esc(svc.join(', ')):'Послуги не вказані'}</span><span>${esc('Стан шерсті: '+coat(m.coat_condition))}</span>${price!==''?`<span>${esc(m.final_price!=null?'До оплати: '+price+' грн':'Орієнтовно: '+price+' грн')}</span>`:''}</div><div><button class="small-btn gold" data-cal-edit="${esc(x.id)}">Відкрити</button></div></div>`}).join('')}</div></div>`).join(''):'<div class="card">Підтверджених майбутніх записів немає.</div>'}`;document.getElementById('calendar-refresh')?.addEventListener('click',render);root.querySelectorAll('[data-cal-edit]').forEach(b=>b.onclick=async()=>{const x=upcoming.find(v=>v.id===b.dataset.calEdit);if(x&&typeof window.showAppointment==='function')window.showAppointment(x)})}catch(e){root.innerHTML=`<div class="card error">Помилка: ${esc(e.message)}</div>`}}
-function install(){const b=document.querySelector('[data-view="calendar"]');if(b&&!b.dataset.calendarFix){b.dataset.calendarFix='1';b.onclick=render}const root=document.getElementById('view-calendar');if(root&&!root.dataset.calendarFixObserver){root.dataset.calendarFixObserver='1';new MutationObserver(()=>{const b=document.querySelector('[data-view="calendar"]');if(b&&!b.dataset.calendarFix){b.dataset.calendarFix='1';b.onclick=render}}).observe(document.body,{childList:true,subtree:true})}}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
+const coatLabel=v=>({none:'Нормальний стан',light:'Є ковтуни',severe:'Сильні ковтуни / запущена шерсть'})[v]||'Нормальний стан';
+const statusLabel=v=>({new:'Нова',confirmed:'Підтверджена',done:'Виконана',cancelled:'Скасована'})[v]||v||'—';
+async function getAppointments(){
+  const r=await fetch(API+'/appointments',{credentials:'include',cache:'no-store'});
+  if(!r.ok)throw Error('Не вдалося отримати записи');
+  return r.json();
+}
+function parseMeta(x){
+  try{const o=JSON.parse(x?.additional_services||'');if(o&&typeof o==='object'&&!Array.isArray(o))return o}catch{}
+  return{};
+}
+function serviceNames(m){
+  return Array.isArray(m.services)?m.services.map(v=>typeof v==='string'?v:v?.title).filter(Boolean):[];
+}
+function setActive(){
+  document.querySelectorAll('.nav-item').forEach(x=>x.classList.toggle('active',x.dataset.view==='calendar'));
+  const t=document.getElementById('page-title');if(t)t.textContent='Календар';
+}
+async function renderCalendar(){
+  const root=document.getElementById('view-calendar');
+  if(!root)return;
+  document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
+  root.classList.remove('hidden');
+  setActive();
+  root.innerHTML='<div class="card">Завантаження календаря…</div>';
+  try{
+    const all=await getAppointments();
+    const start=new Date();start.setHours(0,0,0,0);
+    const confirmed=all.filter(x=>x.status==='confirmed'&&x.preferred_time).filter(x=>{const d=new Date(x.preferred_time);return !isNaN(d)&&d>=start}).sort((a,b)=>new Date(a.preferred_time)-new Date(b.preferred_time));
+    const groups={};
+    confirmed.forEach(x=>{const d=new Date(x.preferred_time),key=d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});(groups[key]??=[]).push(x)});
+    root.innerHTML=`<div class="toolbar"><div><h3>Підтверджені записи</h3><span style="color:#aaa">${confirmed.length} майбутніх записів</span></div><button class="small-btn" type="button" id="calendar-refresh">Оновити</button></div>${confirmed.length?Object.entries(groups).map(([day,items])=>`<section class="calendar-day"><h3>${esc(day)}</h3><div class="calendar-list">${items.map(x=>{const m=parseMeta(x),svc=serviceNames(m),price=m.final_price??m.estimated_total??'',d=new Date(x.preferred_time);return `<div class="card calendar-item"><div class="calendar-time">${esc(d.toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'}))}</div><div><b>${esc(x.pet_name||'—')}</b><span>${esc(x.breed||'Без породи')}</span><span>${m.animal_type==='cat'?'Кіт':'Собака'}${m.breed_category?` · ${esc(m.breed_category)}`:''}</span></div><div><b>${esc(x.owner_name||'—')}</b><span>${esc(x.owner_contact||'')}</span></div><div><span>${svc.length?esc(svc.join(', ')):'Послуги не вказані'}</span><span>Стан шерсті: ${esc(coatLabel(m.coat_condition))}</span>${price!==''?`<span>${esc(m.final_price!=null?'До оплати: '+money(price)+' грн':'Орієнтовно: '+money(price)+' грн')}</span>`:''}</div><div><span class="badge confirmed">${esc(statusLabel(x.status))}</span><button class="small-btn gold" type="button" data-cal-edit="${esc(x.id)}">Відкрити</button></div></div>`}).join('')}</div></section>`).join(''):'<div class="card">Підтверджених майбутніх записів немає.</div>'}`;
+    root.querySelector('#calendar-refresh')?.addEventListener('click',renderCalendar);
+    root.querySelectorAll('[data-cal-edit]').forEach(btn=>btn.addEventListener('click',()=>{const x=confirmed.find(v=>v.id===btn.dataset.calEdit);if(x&&typeof window.showAppointment==='function')window.showAppointment(x)}));
+  }catch(e){root.innerHTML=`<div class="card error">Помилка: ${esc(e.message)}</div>`}
+}
+function hook(){
+  document.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-view="calendar"]');
+    if(!btn)return;
+    e.preventDefault();
+    renderCalendar();
+  },true);
+  const observer=new MutationObserver(()=>{
+    const btn=document.querySelector('[data-view="calendar"]');
+    if(btn&&!btn.dataset.calendarHooked)btn.dataset.calendarHooked='1';
+  });
+  observer.observe(document.body,{childList:true,subtree:true});
+  const btn=document.querySelector('[data-view="calendar"]');
+  if(btn)btn.dataset.calendarHooked='1';
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',hook);else hook();
+window.royalPetCalendar=renderCalendar;
 })();
