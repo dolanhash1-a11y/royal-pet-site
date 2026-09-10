@@ -60,15 +60,12 @@ async function loadSiteSettings() {
       document.documentElement.style.setProperty("--coral", data.accent_color);
       document.documentElement.style.setProperty("--accent", data.accent_color);
     }
-  } catch (error) {
-    console.error("Помилка site.json:", error);
-  }
+  } catch (error) { console.error("Помилка site.json:", error); }
 }
 
 async function loadHome() {
   try {
     const data = await loadJSON("content/home.json");
-
     document.querySelectorAll("[data-home-title]").forEach(el => el.textContent = data.title || "");
     document.querySelectorAll("[data-home-subtitle]").forEach(el => el.textContent = data.subtitle || "");
     document.querySelectorAll("[data-home-description]").forEach(el => el.textContent = data.description || "");
@@ -77,13 +74,11 @@ async function loadHome() {
       el.textContent = data.button_text || "";
       el.href = data.button_link || "#";
     });
-
-    const secondaryButton = document.querySelector(".hero-actions .text-link");
+    const secondaryButton = document.querySelector("[data-home-secondary-button]");
     if (secondaryButton) {
       secondaryButton.textContent = `${data.secondary_button_text || "Переглянути послуги"} →`;
       secondaryButton.href = data.secondary_button_link || "#services";
     }
-
     if (data.hero_image) {
       const heroImage = document.querySelector(".hero-photo img");
       if (heroImage) heroImage.src = imagePath(data.hero_image);
@@ -96,7 +91,6 @@ async function loadHome() {
       if (label && data.about_label) label.textContent = data.about_label;
       if (title && data.about_title) title.textContent = data.about_title;
     }
-
     const services = document.querySelector("#services");
     if (services) {
       const label = services.querySelector(".section-heading .eyebrow");
@@ -106,7 +100,6 @@ async function loadHome() {
       if (title && data.services_title) title.textContent = data.services_title;
       if (text && data.services_text) text.textContent = data.services_text;
     }
-
     const gallery = document.querySelector("#gallery");
     if (gallery) {
       const label = gallery.querySelector(".section-heading .eyebrow");
@@ -114,7 +107,6 @@ async function loadHome() {
       if (label && data.gallery_label) label.textContent = data.gallery_label;
       if (title && data.gallery_title) title.textContent = data.gallery_title;
     }
-
     const reviews = document.querySelector("#reviews");
     if (reviews) {
       const label = reviews.querySelector(".eyebrow");
@@ -122,7 +114,6 @@ async function loadHome() {
       if (label && data.reviews_label) label.textContent = data.reviews_label;
       if (title && data.reviews_title) title.textContent = data.reviews_title;
     }
-
     const booking = document.querySelector("#booking");
     if (booking) {
       const label = booking.querySelector(".booking-intro .eyebrow");
@@ -153,8 +144,7 @@ async function loadHome() {
             if (placeholderKey) setInputPlaceholder(name, data[placeholderKey]);
           }
         });
-
-        const fieldset = form.querySelector("fieldset[name='home_care'], fieldset.full");
+        const fieldset = form.querySelector("fieldset.full");
         if (fieldset) {
           const legend = fieldset.querySelector("legend");
           if (legend && data.form_home_care_label) legend.textContent = data.form_home_care_label;
@@ -166,12 +156,10 @@ async function loadHome() {
             }
           });
         }
-
         const submit = form.querySelector('button[type="submit"]');
         if (submit && data.form_submit) submit.textContent = data.form_submit;
       }
     }
-
     const contacts = document.querySelector("#contacts");
     if (contacts) {
       const label = contacts.querySelector(".eyebrow");
@@ -179,7 +167,6 @@ async function loadHome() {
       if (label && data.contacts_label) label.textContent = data.contacts_label;
       if (title && data.contacts_title) title.textContent = data.contacts_title;
     }
-
     const hours = document.querySelector("section[aria-labelledby=\"hours-title\"]");
     if (hours) {
       const label = hours.querySelector(".eyebrow");
@@ -187,9 +174,7 @@ async function loadHome() {
       if (label && data.hours_label) label.textContent = data.hours_label;
       if (title && data.hours_title) title.textContent = data.hours_title;
     }
-  } catch (error) {
-    console.error("Помилка home.json:", error);
-  }
+  } catch (error) { console.error("Помилка home.json:", error); }
 }
 
 async function loadAbout() {
@@ -201,7 +186,6 @@ async function loadAbout() {
     const text = section.querySelector(".section-text");
     if (title && data.title) title.textContent = data.title;
     if (text && data.text) text.textContent = data.text;
-
     if (data.image) {
       let existing = section.querySelector(".about-image");
       if (!existing) {
@@ -214,7 +198,6 @@ async function loadAbout() {
       }
       existing.src = imagePath(data.image);
     }
-
     if (Array.isArray(data.benefits)) {
       const benefits = section.querySelector(".benefits");
       if (benefits) {
@@ -226,9 +209,7 @@ async function loadAbout() {
         });
       }
     }
-  } catch (error) {
-    console.error("Помилка about.json:", error);
-  }
+  } catch (error) { console.error("Помилка about.json:", error); }
 }
 
 async function loadServices() {
@@ -295,32 +276,18 @@ async function loadContacts() {
     const data = await loadJSON("content/contacts.json");
     const section = document.querySelector("#contacts");
     if (!section) return;
-
     const title = section.querySelector("h2");
     const text = section.querySelector("[data-contact-text]");
     if (title) title.textContent = data.title || "";
     if (text) text.textContent = data.text || "";
-
-    const address = section.querySelector("[data-site-address]");
-    if (address && data.address_label) {
-      const parent = address.parentElement;
-      if (parent) {
-        const firstText = Array.from(parent.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
-        if (firstText) firstText.textContent = `\n          ${data.address_label}:\n          `;
-      }
-    }
-
-    const phone = section.querySelector("[data-site-phone]");
-    if (phone && data.phone_label) {
-      const phoneParent = phone.parentElement;
-      if (phoneParent && !phoneParent.dataset.contactPhoneLabel) {
-        const label = document.createElement("span");
-        label.textContent = `${data.phone_label}: `;
-        phoneParent.insertBefore(label, phone);
-        phoneParent.dataset.contactPhoneLabel = "true";
-      }
-    }
-
+    const addressLabel = section.querySelector("[data-contact-address-label]");
+    if (addressLabel) addressLabel.textContent = `${data.address_label || "Адреса"}:`;
+    const hoursLabel = section.querySelector("[data-contact-hours-label]");
+    if (hoursLabel) hoursLabel.textContent = `${data.hours_label || "Графік"}:`;
+    const phoneLabel = section.querySelector("[data-contact-phone-label]");
+    if (phoneLabel) phoneLabel.textContent = `${data.phone_label || "Телефон"}:`;
+    const dayLabel = section.querySelector("[data-contact-hours-day]");
+    if (dayLabel) dayLabel.textContent = "Понеділок:";
     const actions = section.querySelector(".contact-actions");
     const instagram = actions?.querySelector("[data-site-instagram]");
     const telegram = actions?.querySelector("[data-site-telegram]");
@@ -381,23 +348,15 @@ async function loadFooter() {
     const data = await loadJSON("content/footer.json");
     const footer = document.querySelector("footer");
     if (!footer) return;
-
-    footer.innerHTML = `
-      <a class="logo" href="#home">
-        <span>✦</span>
-        <span data-site-name>Royal Pet</span>
-      </a>
-      <p data-footer-text></p>
-      <p data-footer-description></p>
-      <p data-footer-copyright></p>
-    `;
-
     const site = await loadJSON("content/site.json").catch(() => ({}));
     const name = site.name || "Royal Pet";
     footer.querySelectorAll("[data-site-name]").forEach(el => el.textContent = name);
-    footer.querySelector("[data-footer-text]").textContent = data.text || "";
-    footer.querySelector("[data-footer-description]").textContent = data.description || "";
-    footer.querySelector("[data-footer-copyright]").textContent = data.copyright || `© ${new Date().getFullYear()} ${name}. Усі права захищені.`;
+    const text = footer.querySelector("[data-footer-text]");
+    const description = footer.querySelector("[data-footer-description]");
+    const copyright = footer.querySelector("[data-footer-copyright]");
+    if (text) text.textContent = data.text || "";
+    if (description) description.textContent = data.description || "";
+    if (copyright) copyright.textContent = data.copyright || `© ${new Date().getFullYear()} ${name}. Усі права захищені.`;
   } catch (error) { console.error("Помилка footer.json:", error); }
 }
 
