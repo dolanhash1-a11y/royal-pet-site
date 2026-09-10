@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS appointments (
   pet_name TEXT NOT NULL,
   age TEXT,
   breed TEXT,
+  owner_name TEXT DEFAULT '',
   owner_contact TEXT NOT NULL,
   last_grooming TEXT,
   preferred_time TEXT,
