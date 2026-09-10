@@ -207,3 +207,66 @@ collections:
               - label: "Текст сторінки"
                 name: "body"
                 widget: "markdown"
+                ```yaml
+  # =========================
+  # ВІДГУКИ
+  # =========================
+  - name: "reviews"
+    label: "⭐ Відгуки"
+    files:
+
+      - label: "Всі відгуки"
+        name: "reviews"
+        file: "content/reviews.json"
+
+        fields:
+
+          - label: "Відгуки"
+            name: "items"
+            widget: "list"
+            summary: "{{fields.name}} — {{fields.rating}}⭐"
+
+            fields:
+
+              - label: "Ім'я клієнта"
+                name: "name"
+                widget: "string"
+
+              - label: "Оцінка"
+                name: "rating"
+                widget: "select"
+                options:
+                  - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                default: "5"
+
+              - label: "Відгук"
+                name: "text"
+                widget: "text"
+
+              - label: "Фото клієнта"
+                name: "image"
+                widget: "image"
+                required: false
+
+              - label: "Дата"
+                name: "date"
+                widget: "datetime"
+                required: false
+
+              - label: "Статус"
+                name: "status"
+                widget: "select"
+                options:
+                  - label: "🟡 На модерації"
+                    value: "pending"
+                  - label: "🟢 Опубліковано"
+                    value: "published"
+                  - label: "🔴 Приховано"
+                    value: "hidden"
+                default: "pending"
+```
+
