@@ -1,25 +1,25 @@
 #rp-mobile-menu{display:none}
 @media(max-width:520px){
   body.rp-mobile-menu-lock{overflow:hidden}
-  #rp-mobile-menu{display:block;position:relative;z-index:1000}
-  .rp-mobile-menu-button{appearance:none;border:1px solid #3a3021;background:#111;color:#f1d48a;border-radius:10px;min-width:48px;height:44px;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:700;cursor:pointer}
+  #rp-mobile-menu{display:block;position:static;z-index:1100}
+  .rp-mobile-menu-button{position:fixed;top:10px;right:12px;z-index:1200;appearance:none;border:1px solid #3a3021;background:#111;color:#f1d48a;border-radius:10px;min-width:48px;height:44px;padding:0 11px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:700;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;pointer-events:auto}
   .rp-mobile-menu-icon{font-size:21px;line-height:1}
   .rp-mobile-menu-label{font-size:12px;line-height:1}
-  .rp-mobile-menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:1000;opacity:0;pointer-events:none;transition:opacity .18s ease}
-  .rp-mobile-menu-panel{position:fixed;top:0;right:0;width:min(86vw,340px);height:100dvh;background:#0b0b0b;border-left:1px solid #3a2e1c;box-shadow:-20px 0 60px rgba(0,0,0,.45);transform:translateX(102%);transition:transform .2s ease;z-index:1001;padding:20px 14px 24px;display:flex;flex-direction:column;overflow:auto}
+  .rp-mobile-menu-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.58);z-index:1200;opacity:0;pointer-events:none;transition:opacity .18s ease}
+  .rp-mobile-menu-panel{position:fixed;top:0;right:0;width:min(86vw,340px);height:100dvh;background:#0b0b0b;border-left:1px solid #3a2e1c;box-shadow:-20px 0 60px rgba(0,0,0,.45);transform:translateX(102%);transition:transform .2s ease;z-index:1201;padding:20px 14px 24px;display:flex;flex-direction:column;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
   .rp-mobile-menu.open .rp-mobile-menu-backdrop{opacity:1;pointer-events:auto}
   .rp-mobile-menu.open .rp-mobile-menu-panel{transform:translateX(0)}
   .rp-mobile-menu-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 4px 18px;border-bottom:1px solid #252019;margin-bottom:12px}
   .rp-mobile-menu-head strong{font-family:'Cormorant Garamond',serif;font-size:30px;color:#f1d48a}
-  .rp-mobile-menu-close{appearance:none;border:1px solid #3a3021;background:#111;color:#ddd;border-radius:10px;width:42px;height:42px;font-size:22px;cursor:pointer}
+  .rp-mobile-menu-close{appearance:none;border:1px solid #3a3021;background:#111;color:#ddd;border-radius:10px;width:42px;height:42px;font-size:22px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .rp-mobile-menu-list{display:grid;gap:7px}
-  .rp-mobile-menu-item{appearance:none;width:100%;border:1px solid transparent;background:transparent;color:#d7d0c4;border-radius:12px;padding:13px 12px;display:flex;align-items:center;gap:11px;text-align:left;font-size:14px;cursor:pointer}
+  .rp-mobile-menu-item{appearance:none;width:100%;border:1px solid transparent;background:transparent;color:#d7d0c4;border-radius:12px;padding:13px 12px;display:flex;align-items:center;gap:11px;text-align:left;font-size:14px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .rp-mobile-menu-item:hover,.rp-mobile-menu-item:active,.rp-mobile-menu-item.active{background:#15120d;border-color:#342a18;color:#f1d48a}
   .rp-mobile-menu-item .mi-icon{width:26px;text-align:center;font-size:18px}
   .rp-mobile-menu-item .mi-badge{margin-left:auto;background:#8f2828;color:#fff;border-radius:20px;padding:2px 7px;font-size:10px}
   .rp-mobile-menu-spacer{height:10px;border-bottom:1px solid #252019;margin:2px 0 6px}
-  .rp-mobile-menu-logout{margin-top:auto;border-color:#402b20;color:#ffb0b0}
-  .topbar{position:sticky}
+  .rp-mobile-menu-logout{border-color:#402b20;color:#ffb0b0}
+  .rp-mobile-menu-button:focus-visible,.rp-mobile-menu-close:focus-visible,.rp-mobile-menu-item:focus-visible{outline:2px solid #d6ad55;outline-offset:2px}
+  .topbar{padding-right:72px;position:sticky}
   .topbar > .site-link{display:none}
-  .topbar > #rp-mobile-menu{margin-left:auto;flex:0 0 auto}
 }
