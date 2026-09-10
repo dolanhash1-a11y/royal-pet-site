@@ -10,34 +10,34 @@
     ['pricing','₴','Прайс']
   ];
 
+  function getRoot(){return document.getElementById('rp-mobile-menu')}
   function close(){
-    const root=document.getElementById('rp-mobile-menu');
+    const root=getRoot();
     if(!root)return;
     root.classList.remove('open');
     document.body.classList.remove('rp-mobile-menu-lock');
+    const toggle=root.querySelector('.rp-mobile-menu-button');
+    if(toggle)toggle.setAttribute('aria-expanded','false');
   }
-
-  function open(){
-    const root=document.getElementById('rp-mobile-menu');
+  function toggleMenu(ev){
+    if(ev){ev.preventDefault();ev.stopPropagation()}
+    const root=getRoot();
     if(!root)return;
-    root.classList.add('open');
-    document.body.classList.add('rp-mobile-menu-lock');
+    const isOpen=root.classList.toggle('open');
+    document.body.classList.toggle('rp-mobile-menu-lock',isOpen);
+    const toggle=root.querySelector('.rp-mobile-menu-button');
+    if(toggle)toggle.setAttribute('aria-expanded',String(isOpen));
   }
 
   function go(view){
-    const button=document.querySelector(`.sidebar .nav-item[data-view="${view}"]`);
     close();
-    if(button){
-      button.click();
-      return;
-    }
+    const button=document.querySelector(`.sidebar .nav-item[data-view="${view}"]`);
+    if(button){button.click();return}
     if(view==='dashboard'&&typeof window.dashboard==='function')window.dashboard();
   }
 
   function build(){
     if(document.getElementById('rp-mobile-menu'))return;
-    const top=document.querySelector('.topbar');
-    if(!top)return;
 
     const root=document.createElement('div');
     root.id='rp-mobile-menu';
@@ -58,15 +58,12 @@
         </div>
       </aside>`;
 
-    top.appendChild(root);
+    document.body.appendChild(root);
 
     const toggle=root.querySelector('.rp-mobile-menu-button');
-    toggle.addEventListener('click',()=>{
-      const isOpen=root.classList.toggle('open');
-      toggle.setAttribute('aria-expanded',String(isOpen));
-      document.body.classList.toggle('rp-mobile-menu-lock',isOpen);
-    });
-    root.querySelector('.rp-mobile-menu-close').addEventListener('click',close);
+    toggle.addEventListener('click',toggleMenu,{passive:false});
+    toggle.addEventListener('pointerup',e=>{if(e.pointerType==='touch')toggleMenu(e)},{passive:false});
+    root.querySelector('.rp-mobile-menu-close').addEventListener('click',e=>{e.preventDefault();close()},{passive:false});
     root.querySelector('.rp-mobile-menu-backdrop').addEventListener('click',close);
     root.querySelectorAll('[data-mobile-view]').forEach(btn=>btn.addEventListener('click',()=>go(btn.dataset.mobileView)));
     root.querySelector('[data-mobile-logout]').addEventListener('click',()=>{
