@@ -1,21 +1,30 @@
 {
-  "items": [
+  "albums": [
     {
-      "title": "Мій постійний клієнт",
-      "image": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=700&q=80",
-      "video_url": "",
-      "description": "Жувто пузько"
-    },
-    {
-      "title": "Щасливий собака",
-      "image": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=700&q=80",
-      "video_url": "",
-      "description": ""
-    },
-    {
-      "title": "Мілка",
-      "image": "/uploads/img_4725.jpg",
-      "description": "Рузя"
+      "id": "main-works",
+      "title": "Наші роботи",
+      "description": "Найкращі роботи Royal Pet",
+      "cover": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=1200&q=85",
+      "items": [
+        {
+          "type": "image",
+          "title": "Мій постійний клієнт",
+          "image": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=900&q=85",
+          "description": "Дбайливий комплексний догляд"
+        },
+        {
+          "type": "image",
+          "title": "Щасливий собака",
+          "image": "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=900&q=85",
+          "description": "До та після грумінгу"
+        },
+        {
+          "type": "image",
+          "title": "Мілка",
+          "image": "/uploads/img_4725.jpg",
+          "description": "Результат після догляду"
+        }
+      ]
     }
   ]
 }
