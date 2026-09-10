@@ -5,15 +5,64 @@
     "large": "Велика"
   },
   "coat_conditions": {
-    "none": {"label":"Шерсть у нормальному стані","note":"Без доплати"},
-    "light": {"label":"Є ковтуни","note":"Сума доплати визначається прайсом"},
-    "severe": {"label":"Сильні ковтуни / запущена шерсть","note":"Сума доплати визначається прайсом"}
+    "none": {
+      "label": "Нормальний",
+      "note": "Без доплати"
+    },
+    "light": {
+      "label": "Є ковтуни",
+      "note": "Додаткова оплата залежить від складності роботи"
+    },
+    "severe": {
+      "label": "Сильні ковтуни / запущена шерсть",
+      "note": "Додаткова оплата залежить від складності роботи"
+    }
+  },
+  "default_coat_surcharges": {
+    "none": 0,
+    "light": 200,
+    "severe": 400
   },
   "services": {
-    "service-1": {"small":800,"medium":800,"large":800,"none":0,"light":0,"severe":0},
-    "service-2": {"small":500,"medium":500,"large":500,"none":0,"light":0,"severe":0},
-    "service-3": {"small":400,"medium":400,"large":400,"none":0,"light":0,"severe":0},
-    "service-4": {"small":600,"medium":600,"large":600,"none":0,"light":0,"severe":0},
-    "service-5": {"small":100,"medium":100,"large":100,"none":0,"light":0,"severe":0}
+    "service-1": {
+      "small": 800,
+      "medium": 800,
+      "large": 800,
+      "none": 0,
+      "light": 200,
+      "severe": 400
+    },
+    "service-2": {
+      "small": 500,
+      "medium": 500,
+      "large": 500,
+      "none": 0,
+      "light": 200,
+      "severe": 400
+    },
+    "service-3": {
+      "small": 400,
+      "medium": 400,
+      "large": 400,
+      "none": 0,
+      "light": 200,
+      "severe": 400
+    },
+    "service-4": {
+      "small": 600,
+      "medium": 600,
+      "large": 600,
+      "none": 0,
+      "light": 200,
+      "severe": 400
+    },
+    "service-5": {
+      "small": 100,
+      "medium": 100,
+      "large": 100,
+      "none": 0,
+      "light": 200,
+      "severe": 400
+    }
   }
 }
