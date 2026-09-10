@@ -24,6 +24,19 @@ function imagePath(value) {
   return value.startsWith("/uploads/") ? `.${value}` : value;
 }
 
+function setLabelText(input, text) {
+  if (!input || text == null) return;
+  const label = input.closest("label");
+  if (!label) return;
+  const textNode = Array.from(label.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+  if (textNode) textNode.textContent = `\n          ${text}\n          `;
+}
+
+function setInputPlaceholder(name, text) {
+  const input = document.querySelector(`[name="${name}"]`);
+  if (input && text != null) input.placeholder = text;
+}
+
 async function loadSiteSettings() {
   try {
     const data = await loadJSON("content/site.json");
@@ -115,9 +128,48 @@ async function loadHome() {
       const label = booking.querySelector(".booking-intro .eyebrow");
       const title = booking.querySelector("h2");
       const text = booking.querySelector(".booking-intro > p:not(.note)");
+      const note = booking.querySelector(".booking-intro > p.note");
       if (label && data.booking_label) label.textContent = data.booking_label;
       if (title && data.booking_title) title.textContent = data.booking_title;
       if (text && data.booking_text) text.textContent = data.booking_text;
+      if (note && data.booking_note != null) note.textContent = data.booking_note;
+
+      const form = booking.querySelector("#booking-form");
+      if (form) {
+        const fields = [
+          ["pet_name", "form_pet_name_label", "form_pet_name_placeholder"],
+          ["age", "form_age_label", "form_age_placeholder"],
+          ["breed", "form_breed_label", "form_breed_placeholder"],
+          ["owner_contact", "form_owner_label", "form_owner_placeholder"],
+          ["last_grooming", "form_last_grooming_label", "form_last_grooming_placeholder"],
+          ["preferred_time", "form_preferred_time_label", null],
+          ["additional_services", "form_additional_label", "form_additional_placeholder"],
+          ["comment", "form_comment_label", "form_comment_placeholder"]
+        ];
+        fields.forEach(([name, labelKey, placeholderKey]) => {
+          const input = form.querySelector(`[name="${name}"]`);
+          if (input) {
+            setLabelText(input, data[labelKey]);
+            if (placeholderKey) setInputPlaceholder(name, data[placeholderKey]);
+          }
+        });
+
+        const fieldset = form.querySelector("fieldset[name='home_care'], fieldset.full");
+        if (fieldset) {
+          const legend = fieldset.querySelector("legend");
+          if (legend && data.form_home_care_label) legend.textContent = data.form_home_care_label;
+          const options = [data.form_home_care_option1, data.form_home_care_option2, data.form_home_care_option3];
+          form.querySelectorAll('input[name="home_care"]').forEach((input, index) => {
+            if (options[index]) {
+              input.value = options[index];
+              setLabelText(input, options[index]);
+            }
+          });
+        }
+
+        const submit = form.querySelector('button[type="submit"]');
+        if (submit && data.form_submit) submit.textContent = data.form_submit;
+      }
     }
 
     const contacts = document.querySelector("#contacts");
@@ -149,11 +201,21 @@ async function loadAbout() {
     const text = section.querySelector(".section-text");
     if (title && data.title) title.textContent = data.title;
     if (text && data.text) text.textContent = data.text;
+
     if (data.image) {
-      const existing = section.querySelector(".about-image");
-      if (existing) existing.src = imagePath(data.image);
+      let existing = section.querySelector(".about-image");
+      if (!existing) {
+        existing = document.createElement("img");
+        existing.className = "about-image";
+        existing.loading = "lazy";
+        existing.alt = data.title || "Royal Pet";
+        const intro = section.querySelector(".section-text");
+        if (intro) intro.parentNode.insertBefore(existing, intro);
+      }
+      existing.src = imagePath(data.image);
     }
-    if (Array.isArray(data.benefits) && data.benefits.length) {
+
+    if (Array.isArray(data.benefits)) {
       const benefits = section.querySelector(".benefits");
       if (benefits) {
         benefits.innerHTML = "";
@@ -231,14 +293,60 @@ async function loadReviews() {
 async function loadContacts() {
   try {
     const data = await loadJSON("content/contacts.json");
-    document.querySelectorAll("[data-contact-title]").forEach(el => el.textContent = data.title || "");
-    document.querySelectorAll("[data-contact-text]").forEach(el => el.textContent = data.text || "");
-    document.querySelectorAll("[data-contact-phone2]").forEach(el => {
-      if (data.phone2) { el.textContent = data.phone2; el.href = `tel:${data.phone2.replace(/[^\d+]/g, "")}`; el.style.display = ""; } else el.style.display = "none";
-    });
-    document.querySelectorAll("[data-contact-email]").forEach(el => {
-      if (data.email) { el.textContent = data.email; el.href = `mailto:${data.email}`; el.style.display = ""; } else el.style.display = "none";
-    });
+    const section = document.querySelector("#contacts");
+    if (!section) return;
+
+    const title = section.querySelector("h2");
+    const text = section.querySelector("[data-contact-text]");
+    if (title) title.textContent = data.title || "";
+    if (text) text.textContent = data.text || "";
+
+    const address = section.querySelector("[data-site-address]");
+    if (address && data.address_label) {
+      const parent = address.parentElement;
+      if (parent) {
+        const firstText = Array.from(parent.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+        if (firstText) firstText.textContent = `\n          ${data.address_label}:\n          `;
+      }
+    }
+
+    const phone = section.querySelector("[data-site-phone]");
+    if (phone && data.phone_label) {
+      const phoneParent = phone.parentElement;
+      if (phoneParent && !phoneParent.dataset.contactPhoneLabel) {
+        const label = document.createElement("span");
+        label.textContent = `${data.phone_label}: `;
+        phoneParent.insertBefore(label, phone);
+        phoneParent.dataset.contactPhoneLabel = "true";
+      }
+    }
+
+    const actions = section.querySelector(".contact-actions");
+    const instagram = actions?.querySelector("[data-site-instagram]");
+    const telegram = actions?.querySelector("[data-site-telegram]");
+    if (instagram && data.instagram_text) instagram.textContent = data.instagram_text;
+    if (telegram && data.telegram_text) telegram.textContent = data.telegram_text;
+
+    let extras = section.querySelector(".contact-extra");
+    if (!extras) {
+      extras = document.createElement("div");
+      extras.className = "contact-extra";
+      const primaryPhone = section.querySelector("[data-site-phone]");
+      if (primaryPhone?.parentElement) primaryPhone.parentElement.appendChild(extras);
+    }
+    extras.innerHTML = "";
+    if (data.phone2) {
+      const link = document.createElement("a");
+      link.href = `tel:${data.phone2.replace(/[^\d+]/g, "")}`;
+      link.textContent = `${data.phone_label || "Телефон"}: ${data.phone2}`;
+      extras.appendChild(link);
+    }
+    if (data.email) {
+      const link = document.createElement("a");
+      link.href = `mailto:${data.email}`;
+      link.textContent = `${data.email_label || "Email"}: ${data.email}`;
+      extras.appendChild(link);
+    }
   } catch (error) { console.error("Помилка contacts.json:", error); }
 }
 
@@ -273,12 +381,23 @@ async function loadFooter() {
     const data = await loadJSON("content/footer.json");
     const footer = document.querySelector("footer");
     if (!footer) return;
-    const text = footer.querySelector("[data-footer-text]") || footer.querySelector("p");
-    const copyright = footer.querySelector("[data-footer-copyright]");
-    const description = footer.querySelector("[data-footer-description]");
-    if (text && data.text) text.textContent = data.text;
-    if (copyright && data.copyright) copyright.textContent = data.copyright;
-    if (description && data.description) description.textContent = data.description;
+
+    footer.innerHTML = `
+      <a class="logo" href="#home">
+        <span>✦</span>
+        <span data-site-name>Royal Pet</span>
+      </a>
+      <p data-footer-text></p>
+      <p data-footer-description></p>
+      <p data-footer-copyright></p>
+    `;
+
+    const site = await loadJSON("content/site.json").catch(() => ({}));
+    const name = site.name || "Royal Pet";
+    footer.querySelectorAll("[data-site-name]").forEach(el => el.textContent = name);
+    footer.querySelector("[data-footer-text]").textContent = data.text || "";
+    footer.querySelector("[data-footer-description]").textContent = data.description || "";
+    footer.querySelector("[data-footer-copyright]").textContent = data.copyright || `© ${new Date().getFullYear()} ${name}. Усі права захищені.`;
   } catch (error) { console.error("Помилка footer.json:", error); }
 }
 
@@ -311,20 +430,22 @@ async function initBookingForm() {
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const button = form.querySelector('button[type="submit"]');
-    if (button) { button.disabled = true; button.textContent = "Відправляємо..."; }
+    let labels = {};
+    try { labels = await loadJSON("content/home.json"); } catch (_) {}
+    if (button) { button.disabled = true; button.textContent = labels.form_sending || "Відправляємо…"; }
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
     try {
       const response = await fetch("https://royal-pet-telegram.dolanhash1.workers.dev", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
       const result = await response.json();
       if (!response.ok || !result.success) throw new Error("Помилка відправлення");
-      if (message) message.textContent = "✅ Дякуємо! Заявку отримано. Ми скоро зв’яжемося з вами.";
+      if (message) message.textContent = labels.form_success || "✅ Дякуємо! Заявку отримано. Ми скоро зв’яжемося з вами.";
       form.reset();
     } catch (error) {
       console.error("Помилка заявки:", error);
-      if (message) message.textContent = "❌ Не вдалося відправити заявку. Спробуйте ще раз або зателефонуйте нам.";
+      if (message) message.textContent = labels.form_error || "❌ Не вдалося відправити заявку. Спробуйте ще раз або зателефонуйте нам.";
     } finally {
-      if (button) { button.disabled = false; button.textContent = "Надіслати заявку"; }
+      if (button) { button.disabled = false; button.textContent = labels.form_submit || "Надіслати заявку"; }
     }
   });
 }
