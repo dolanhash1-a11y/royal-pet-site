@@ -1,0 +1,9 @@
+{
+  "items": [
+    { "title": "Послуги", "url": "#services", "active": true, "order": 1 },
+    { "title": "Галерея", "url": "#gallery", "active": true, "order": 2 },
+    { "title": "Відгуки", "url": "#reviews", "active": true, "order": 3 },
+    { "title": "Контакти", "url": "#contacts", "active": true, "order": 4 },
+    { "title": "Записатися", "url": "#booking", "active": true, "order": 5 }
+  ]
+}
