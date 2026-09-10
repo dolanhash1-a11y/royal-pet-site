@@ -20,3 +20,21 @@ CREATE TABLE IF NOT EXISTS reviews (id TEXT PRIMARY KEY,name TEXT NOT NULL,ratin
 INSERT OR IGNORE INTO reviews(id,name,rating,text,reply,status,created_at) VALUES
 ('review-1','АНЮТА',5,'Дуже задоволена результатом! Собачка виглядає чудово, обов\'язково прийдемо ще.','','published','2026-01-01T00:00:00Z'),
 ('review-2','Марія',5,'Дуже уважне ставлення до тваринки. Все акуратно та професійно.','','published','2026-01-02T00:00:00Z');
+CREATE TABLE IF NOT EXISTS services (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  price TEXT NOT NULL DEFAULT '',
+  duration TEXT NOT NULL DEFAULT '',
+  category TEXT NOT NULL DEFAULT '',
+  description TEXT NOT NULL DEFAULT '',
+  image TEXT NOT NULL DEFAULT '',
+  active INTEGER NOT NULL DEFAULT 1,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+INSERT OR IGNORE INTO services(id,title,price,duration,category,description,image,active,sort_order,created_at) VALUES
+('service-1','Комплексний грумінг','від 800 грн','2–3 години','Грумінг','Повний комплекс догляду за вашим улюбленцем: купання, сушка, вичісування, стрижка та догляд за кігтями.','',1,1,'2026-01-01T00:00:00Z'),
+('service-2','Гігієнічний грумінг','від 500 грн','1–1,5 години','Гігієна','Гігієнічний догляд, який допомагає підтримувати чистоту та комфорт вашого улюбленця.','',1,2,'2026-01-01T00:00:00Z'),
+('service-3','Вичісування','від 400 грн','45–60 хвилин','Догляд','Ретельне вичісування шерсті та видалення зайвого підшерстя.','',1,3,'2026-01-01T00:00:00Z'),
+('service-4','Стрижка','від 600 грн','1–2 години','Грумінг','Стрижка відповідно до породи, побажань власника та стану шерсті.','',1,4,'2026-01-01T00:00:00Z'),
+('service-5','Зубки','100','2 години','Гігієна','Чистка зубів новітніми засобами','/uploads/img_4725.jpg',1,5,'2026-01-01T00:00:00Z');
