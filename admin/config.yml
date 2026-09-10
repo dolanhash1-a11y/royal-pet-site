@@ -9,136 +9,155 @@ media_folder: "uploads"
 public_folder: "/uploads"
 
 collections:
-
-  # =========================
-  # НАЛАШТУВАННЯ САЙТУ
-  # =========================
   - name: "settings"
     label: "⚙️ Налаштування"
     files:
-
       - label: "Основні налаштування"
         name: "site"
         file: "content/site.json"
-
         fields:
-
           - label: "Назва студії"
             name: "name"
             widget: "string"
-
           - label: "Місто / підзаголовок"
             name: "location"
             widget: "string"
-
           - label: "Телефон"
             name: "phone"
             widget: "string"
-
           - label: "Адреса"
             name: "address"
             widget: "string"
-
           - label: "Instagram"
             name: "instagram"
             widget: "string"
             required: false
-
           - label: "Telegram"
             name: "telegram"
             widget: "string"
             required: false
-
           - label: "Facebook"
             name: "facebook"
             widget: "string"
             required: false
-
           - label: "TikTok"
             name: "tiktok"
             widget: "string"
             required: false
-
           - label: "Основний колір"
             name: "primary_color"
             widget: "color"
             default: "#517064"
-
           - label: "Акцентний колір"
             name: "accent_color"
             widget: "color"
             default: "#d98370"
 
-
-  # =========================
-  # ГОЛОВНА
-  # =========================
   - name: "home"
     label: "🏠 Головна"
     files:
-
-      - label: "Hero-блок"
+      - label: "Головна сторінка"
         name: "home"
         file: "content/home.json"
-
         fields:
-
-          - label: "Заголовок"
+          - label: "Головний заголовок"
             name: "title"
             widget: "string"
-
           - label: "Підзаголовок"
             name: "subtitle"
             widget: "string"
-
           - label: "Опис"
             name: "description"
             widget: "text"
-
-          - label: "Текст кнопки"
+          - label: "Текст головної кнопки"
             name: "button_text"
             widget: "string"
-
-          - label: "Посилання кнопки"
+          - label: "Посилання головної кнопки"
             name: "button_link"
             widget: "string"
+          - label: "Текст другої кнопки"
+            name: "secondary_button_text"
+            widget: "string"
+            required: false
+          - label: "Посилання другої кнопки"
+            name: "secondary_button_link"
+            widget: "string"
+            required: false
+          - label: "Головне фото"
+            name: "hero_image"
+            widget: "image"
+            required: false
+          - label: "Підпис блоку «Про нас»"
+            name: "about_label"
+            widget: "string"
+          - label: "Заголовок «Про нас»"
+            name: "about_title"
+            widget: "string"
+          - label: "Підпис блоку «Послуги»"
+            name: "services_label"
+            widget: "string"
+          - label: "Заголовок «Послуги»"
+            name: "services_title"
+            widget: "string"
+          - label: "Текст біля послуг"
+            name: "services_text"
+            widget: "text"
+          - label: "Підпис блоку «Галерея»"
+            name: "gallery_label"
+            widget: "string"
+          - label: "Заголовок «Галерея»"
+            name: "gallery_title"
+            widget: "string"
+          - label: "Підпис блоку «Відгуки»"
+            name: "reviews_label"
+            widget: "string"
+          - label: "Заголовок «Відгуки»"
+            name: "reviews_title"
+            widget: "string"
+          - label: "Підпис блоку «Запис»"
+            name: "booking_label"
+            widget: "string"
+          - label: "Заголовок «Запис»"
+            name: "booking_title"
+            widget: "string"
+          - label: "Текст блоку «Запис»"
+            name: "booking_text"
+            widget: "text"
+          - label: "Підпис блоку «Контакти»"
+            name: "contacts_label"
+            widget: "string"
+          - label: "Заголовок «Контакти»"
+            name: "contacts_title"
+            widget: "string"
+          - label: "Підпис блоку «Графік»"
+            name: "hours_label"
+            widget: "string"
+          - label: "Заголовок «Графік»"
+            name: "hours_title"
+            widget: "string"
 
-
-  # =========================
-  # ПОСЛУГИ
-  # =========================
   - name: "services"
     label: "✂️ Послуги"
     files:
-
       - label: "Всі послуги"
         name: "services"
         file: "content/services.json"
-
         fields:
-
           - label: "Послуги"
             name: "items"
             widget: "list"
             summary: "{{fields.title}} — {{fields.price}}"
-
             fields:
-
               - label: "Назва послуги"
                 name: "title"
                 widget: "string"
-
               - label: "Ціна"
                 name: "price"
                 widget: "string"
-                hint: "Наприклад: від 500 грн"
-
               - label: "Тривалість"
                 name: "duration"
                 widget: "string"
                 required: false
-                hint: "Наприклад: 1,5 години"
-
               - label: "Категорія"
                 name: "category"
                 widget: "select"
@@ -149,415 +168,289 @@ collections:
                   - "Догляд"
                   - "Додаткові послуги"
                   - "Інше"
-
               - label: "Опис"
                 name: "description"
                 widget: "text"
-
               - label: "Фото"
                 name: "image"
                 widget: "image"
                 required: false
-
               - label: "Показувати на сайті"
                 name: "active"
                 widget: "boolean"
                 default: true
-
               - label: "Порядок"
                 name: "order"
                 widget: "number"
                 default: 0
                 value_type: "int"
 
-
-  # =========================
-  # ПРО СТУДІЮ
-  # =========================
   - name: "about"
     label: "👑 Про студію"
     files:
-
       - label: "Інформація про студію"
         name: "about"
         file: "content/about.json"
-
         fields:
-
           - label: "Заголовок"
             name: "title"
             widget: "string"
-
           - label: "Опис"
             name: "text"
             widget: "text"
-
           - label: "Фото"
             name: "image"
             widget: "image"
             required: false
-
           - label: "Переваги"
             name: "benefits"
             widget: "list"
             required: false
-
             fields:
-
               - label: "Заголовок"
                 name: "title"
                 widget: "string"
-
               - label: "Опис"
                 name: "text"
                 widget: "text"
                 required: false
 
-
-  # =========================
-  # ГАЛЕРЕЯ
-  # =========================
   - name: "portfolio"
     label: "📸 Галерея"
     files:
-
       - label: "Фото та відео робіт"
         name: "works"
         file: "content/portfolio.json"
-
         fields:
-
           - label: "Роботи"
             name: "items"
             widget: "list"
             summary: "{{fields.title}}"
-
             fields:
-
               - label: "Назва"
                 name: "title"
                 widget: "string"
-
               - label: "Фото"
                 name: "image"
                 widget: "image"
                 required: false
-
               - label: "Посилання на відео"
                 name: "video_url"
                 widget: "string"
                 required: false
-
               - label: "Опис"
                 name: "description"
                 widget: "text"
                 required: false
 
-
-  # =========================
-  # ВІДГУКИ
-  # =========================
   - name: "reviews"
     label: "⭐ Відгуки"
     files:
-
       - label: "Всі відгуки"
         name: "reviews"
         file: "content/reviews.json"
-
         fields:
-
           - label: "Відгуки"
             name: "items"
             widget: "list"
             summary: "{{fields.name}} — {{fields.rating}}⭐"
-
             fields:
-
               - label: "Ім'я клієнта"
                 name: "name"
                 widget: "string"
-
               - label: "Оцінка"
                 name: "rating"
                 widget: "select"
-                options:
-                  - "1"
-                  - "2"
-                  - "3"
-                  - "4"
-                  - "5"
+                options: ["1", "2", "3", "4", "5"]
                 default: "5"
-
               - label: "Відгук"
                 name: "text"
                 widget: "text"
-
               - label: "Фото клієнта"
                 name: "image"
                 widget: "image"
                 required: false
-
               - label: "Дата"
                 name: "date"
                 widget: "datetime"
                 required: false
-
               - label: "Статус"
                 name: "status"
                 widget: "select"
                 options:
                   - label: "🟡 На модерації"
                     value: "pending"
-
                   - label: "🟢 Опубліковано"
                     value: "published"
-
                   - label: "🔴 Приховано"
                     value: "hidden"
-
                 default: "pending"
 
-
-  # =========================
-  # КОНТАКТИ
-  # =========================
   - name: "contacts"
     label: "📞 Контакти"
     files:
-
       - label: "Контактна інформація"
         name: "contacts"
         file: "content/contacts.json"
-
         fields:
-
           - label: "Заголовок"
             name: "title"
             widget: "string"
-
           - label: "Текст"
             name: "text"
             widget: "text"
-
           - label: "Додатковий телефон"
             name: "phone2"
             widget: "string"
             required: false
-
           - label: "Email"
             name: "email"
             widget: "string"
             required: false
 
-
-  # =========================
-  # СОЦІАЛЬНІ МЕРЕЖІ
-  # =========================
   - name: "social"
     label: "📱 Соцмережі"
     files:
-
       - label: "Посилання на соцмережі"
         name: "social"
         file: "content/social.json"
-
         fields:
-
           - label: "Instagram"
             name: "instagram"
             widget: "string"
             required: false
-
           - label: "Telegram"
             name: "telegram"
             widget: "string"
             required: false
-
           - label: "Facebook"
             name: "facebook"
             widget: "string"
             required: false
-
           - label: "TikTok"
             name: "tiktok"
             widget: "string"
             required: false
 
-
-  # =========================
-  # ГРАФІК РОБОТИ
-  # =========================
   - name: "hours"
     label: "🕐 Графік роботи"
     files:
-
       - label: "Години роботи"
         name: "hours"
         file: "content/hours.json"
-
         fields:
-
           - label: "Понеділок"
             name: "monday"
             widget: "string"
-
           - label: "Вівторок"
             name: "tuesday"
             widget: "string"
-
           - label: "Середа"
             name: "wednesday"
             widget: "string"
-
           - label: "Четвер"
             name: "thursday"
             widget: "string"
-
           - label: "П'ятниця"
             name: "friday"
             widget: "string"
-
           - label: "Субота"
             name: "saturday"
             widget: "string"
-
           - label: "Неділя"
             name: "sunday"
             widget: "string"
 
-
-  # =========================
-  # СТОРІНКИ
-  # =========================
   - name: "pages"
     label: "📄 Сторінки"
     files:
-
       - label: "Сторінки сайту"
         name: "pages"
         file: "content/pages.json"
-
         fields:
-
           - label: "Сторінки"
             name: "items"
             widget: "list"
             summary: "{{fields.title}}"
-
             fields:
-
               - label: "Назва в меню"
                 name: "title"
                 widget: "string"
-
               - label: "Адреса латиницею"
                 name: "slug"
                 widget: "string"
                 pattern:
                   - '^[a-z0-9-]+$'
                   - 'Лише малі латинські літери, цифри та дефіс'
-
               - label: "Текст сторінки"
                 name: "body"
                 widget: "markdown"
 
-
-  # =========================
-  # SEO
-  # =========================
   - name: "seo"
     label: "🔍 SEO"
     files:
-
       - label: "SEO налаштування"
         name: "seo"
         file: "content/seo.json"
-
         fields:
-
           - label: "Назва сайту"
             name: "title"
             widget: "string"
-
           - label: "Опис сайту"
             name: "description"
             widget: "text"
-
           - label: "Ключові слова"
             name: "keywords"
             widget: "string"
             required: false
-
           - label: "Зображення для соцмереж"
             name: "image"
             widget: "image"
             required: false
 
-
-  # =========================
-  # МЕНЮ
-  # =========================
   - name: "menu"
     label: "🧭 Меню"
     files:
-
       - label: "Меню сайту"
         name: "menu"
         file: "content/menu.json"
-
         fields:
-
           - label: "Пункти меню"
             name: "items"
             widget: "list"
             summary: "{{fields.title}}"
-
             fields:
-
               - label: "Назва"
                 name: "title"
                 widget: "string"
-
               - label: "Посилання"
                 name: "url"
                 widget: "string"
-
               - label: "Показувати"
                 name: "active"
                 widget: "boolean"
                 default: true
-
               - label: "Порядок"
                 name: "order"
                 widget: "number"
                 default: 0
                 value_type: "int"
 
-
-  # =========================
-  # ФУТЕР
-  # =========================
   - name: "footer"
     label: "🦶 Футер"
     files:
-
       - label: "Налаштування футера"
         name: "footer"
         file: "content/footer.json"
-
         fields:
-
           - label: "Текст"
             name: "text"
             widget: "text"
             required: false
-
           - label: "Копірайт"
             name: "copyright"
             widget: "string"
             required: false
-
           - label: "Додатковий текст"
             name: "description"
             widget: "text"
