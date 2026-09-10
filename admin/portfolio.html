@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Royal Pet — редактор портфоліо</title>
+  <style>body{margin:0;background:#fff}#cms{min-height:100vh}</style>
+</head>
+<body>
+  <div id="cms"></div>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    CMS.init({config:{
+      backend:{name:'github',repo:'dolanhash1-a11y/royal-pet-site',branch:'main',base_url:'https://royal-pet-admin-login.dolanhash1.workers.dev',auth_endpoint:'auth'},
+      media_folder:'uploads',
+      public_folder:'/uploads',
+      site_url:window.location.origin,
+      collections:[{
+        name:'portfolio',label:'📸 Портфоліо',files:[{
+          label:'Фото та відео робіт',name:'works',file:'content/portfolio.json',fields:[{
+            label:'Матеріали',name:'items',widget:'list',summary:'{{fields.album}} — {{fields.title}}',fields:[
+              {label:'Альбом',name:'album',widget:'string',default:'Наші роботи',hint:'Введіть назву альбому. Однакова назва об’єднує роботи в один альбом на сайті.'},
+              {label:'Назва роботи',name:'title',widget:'string',required:false},
+              {label:'Тип',name:'type',widget:'select',options:['image','video'],default:'image'},
+              {label:'Фото',name:'image',widget:'image',required:false},
+              {label:'Відео',name:'video_url',widget:'file',required:false},
+              {label:'Опис',name:'description',widget:'text',required:false}
+            ]
+          }]
+        }]
+      }]
+    }});
+  </script>
+</body>
+</html>
