@@ -1,0 +1,19 @@
+{
+  "categories": {
+    "small": "Мала",
+    "medium": "Середня",
+    "large": "Велика"
+  },
+  "coat_conditions": {
+    "none": {"label":"Шерсть у нормальному стані","note":"Без доплати"},
+    "light": {"label":"Є ковтуни","note":"Потрібен додатковий час на розплутування"},
+    "severe": {"label":"Сильні ковтуни / запущена шерсть","note":"Значно збільшується обсяг роботи"}
+  },
+  "services": {
+    "service-1": {"small":800,"medium":800,"large":800,"none":0,"light":200,"severe":400},
+    "service-2": {"small":500,"medium":500,"large":500,"none":0,"light":150,"severe":300},
+    "service-3": {"small":400,"medium":400,"large":400,"none":0,"light":150,"severe":300},
+    "service-4": {"small":600,"medium":600,"large":600,"none":0,"light":200,"severe":400},
+    "service-5": {"small":100,"medium":100,"large":100,"none":0,"light":0,"severe":0}
+  }
+}
