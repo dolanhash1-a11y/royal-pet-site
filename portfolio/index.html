@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Портфоліо Royal Pet — фото та відео робіт грумінг-студії.">
+  <title>Royal Pet — портфоліо</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="portfolio.css?v=1">
+</head>
+<body>
+  <header class="header">
+    <a class="logo" href="../" aria-label="На головну"><img src="../assets/royal-pet-logo.svg" alt="Royal Pet"><span data-site-name>Royal Pet</span></a>
+    <button class="menu-button" aria-label="Відкрити меню" aria-expanded="false">☰</button>
+    <nav class="nav" aria-label="Основна навігація">
+      <a href="../#services">Послуги</a>
+      <a href="../#pricing">Прайс</a>
+      <a class="active" href="./">Портфоліо</a>
+      <a href="../#reviews">Відгуки</a>
+      <a href="../#contacts">Контакти</a>
+      <a class="button button-small" href="../booking/">Записатися</a>
+      <a class="cabinet-link" href="../cabinet/">Кабінет ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="section portfolio-hero">
+      <p class="eyebrow">Наші роботи</p>
+      <h1>Портфоліо Royal Pet</h1>
+      <p class="lead">Фото та відео наших пухнастих гостей. Обирайте альбом і переглядайте роботи.</p>
+    </section>
+
+    <section class="section portfolio-section" aria-labelledby="portfolio-title">
+      <div id="portfolio-title" class="portfolio-albums" data-portfolio-albums>
+        <div class="card">Завантаження портфоліо…</div>
+      </div>
+    </section>
+
+    <section class="section tint portfolio-booking">
+      <div class="booking-intro">
+        <p class="eyebrow">Вам подобається результат?</p>
+        <h2>Запишіть улюбленця на грумінг</h2>
+        <p>Заповніть коротку форму та залиште бажаний час — ми зв’яжемося з вами для підтвердження.</p>
+        <a class="button" href="../booking/">Записатися на грумінг →</a>
+      </div>
+    </section>
+  </main>
+
+  <div class="portfolio-lightbox" data-lightbox aria-hidden="true">
+    <button class="portfolio-lightbox-close" type="button" aria-label="Закрити">×</button>
+    <button class="portfolio-lightbox-prev" type="button" aria-label="Попередня робота">‹</button>
+    <div class="portfolio-lightbox-media" data-lightbox-media></div>
+    <button class="portfolio-lightbox-next" type="button" aria-label="Наступна робота">›</button>
+    <div class="portfolio-lightbox-caption" data-lightbox-caption></div>
+  </div>
+
+  <footer>
+    <a class="logo" href="../"><img src="../assets/royal-pet-logo.svg" alt="Royal Pet"><span data-site-name>Royal Pet</span></a>
+    <p data-footer-text>Догляд, який ваш улюбленець відчує.</p>
+    <p data-footer-description></p>
+    <p data-footer-copyright>© 2026 Royal Pet. Усі права захищені.</p>
+  </footer>
+
+  <script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';</script>
+  <script src="../script.js?v=portfolio-page1"></script>
+  <script src="portfolio.js?v=1"></script>
+</body>
+</html>
