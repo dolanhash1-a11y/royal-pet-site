@@ -38,7 +38,6 @@
   function enhanceDashboard(){
     const root=document.getElementById('view-dashboard'),table=root?.querySelector('.table');
     if(!table||table.dataset.ownerEnhanced||table.dataset.ownerEnhancing)return;
-    // Lock immediately. This prevents MutationObserver re-entry while we modify the table.
     table.dataset.ownerEnhancing='1';
     const head=table.querySelector('thead tr');
     if(!head){delete table.dataset.ownerEnhancing;return}
@@ -50,13 +49,10 @@
         const pet=row.children[1]?.textContent.trim();
         const x=a.find(z=>z.pet_name===pet);
         const td=document.createElement('td');td.textContent=x?.owner_name||'—';
-        row.insertBefore(td,row.children[2]||null);
-        row.dataset.ownerDone='1';
+        row.insertBefore(td,row.children[2]||null);row.dataset.ownerDone='1';
       });
-      table.dataset.ownerEnhanced='1';
-      delete table.dataset.ownerEnhancing;
+      table.dataset.ownerEnhanced='1';delete table.dataset.ownerEnhancing;
     }).catch(()=>{
-      // Leave the dashboard usable even when the appointments request fails.
       const headCells=[...table.querySelectorAll('thead th')];
       if(headCells[2]?.textContent==='Господар')headCells[2].remove();
       delete table.dataset.ownerEnhancing;
@@ -72,8 +68,7 @@
   async function showEnhanced(v){
     document.querySelectorAll('.view').forEach(x=>x.classList.add('hidden'));
     const target=document.getElementById('view-'+v);if(!target)return;
-    target.classList.remove('hidden');
-    enhancedNav(v);
+    target.classList.remove('hidden');enhancedNav(v);
     try{const a=await getAppointments();v==='calendar'?renderCalendar(a):renderClients(a)}
     catch(e){target.innerHTML=`<div class="card error">Помилка: ${esc(e.message)}</div>`}
   }
@@ -88,13 +83,33 @@
     const b=document.getElementById('cal-refresh');if(b)b.onclick=()=>showEnhanced('calendar');
   }
 
+  function openClientCard(client){
+    const visits=[...client.visits].sort((a,b)=>new Date(b.preferred_time)-new Date(a.preferred_time));
+    const pets=[...client.pets].sort((a,b)=>String(a).localeCompare(String(b),'uk'));
+    const rows=visits.map(x=>`<tr><td>${esc(fmt(x.preferred_time))}</td><td><b>${esc(x.pet_name||'—')}</b></td><td>${esc(x.breed||'—')}</td><td>${esc(({new:'Нова',confirmed:'Підтверджена',done:'Виконана',cancelled:'Скасована'})[x.status]||x.status||'—')}</td><td>${esc(x.additional_services||'—')}</td><td>${esc(x.comment||'—')}</td></tr>`).join('');
+    const petsText=pets.length?pets.map(esc).join(', '):'—';
+    const html=`<h3>Картка клієнта</h3><div class="card" style="margin-bottom:14px"><div style="display:grid;gap:8px"><div><b>Господар:</b> ${esc(client.name)}</div><div><b>Телефон:</b> ${esc(client.contact)}</div><div><b>Улюбленці:</b> ${petsText}</div><div><b>Візитів:</b> ${client.visits.length}</div><div><b>Останній запис:</b> ${esc(fmt(client.last))}</div></div></div><h4 style="margin:0 0 10px">Історія відвідувань</h4><div class="table-wrap"><table class="table"><thead><tr><th>Дата</th><th>Улюбленець</th><th>Порода</th><th>Статус</th><th>Додаткові послуги</th><th>Коментар</th></tr></thead><tbody>${rows||'<tr><td colspan="6">Історії ще немає.</td></tr>'}</tbody></table></div><div class="modal-actions"><button class="small-btn" onclick="closeModal()">Закрити</button></div>`;
+    if(typeof window.modal==='function')window.modal(html);
+  }
+
   function renderClients(a){
     const root=document.getElementById('view-clients'),map=new Map();
-    a.forEach(x=>{const key=(x.owner_contact||'').trim().toLowerCase()||x.id,old=map.get(key);if(!old)map.set(key,{name:x.owner_name||'—',contact:x.owner_contact||'—',pets:new Set([x.pet_name||'—']),visits:1,last:x.preferred_time});else{if(old.name==='—'&&x.owner_name)old.name=x.owner_name;old.pets.add(x.pet_name||'—');old.visits++;if(new Date(x.preferred_time)>new Date(old.last))old.last=x.preferred_time}});
-    const clients=[...map.values()].sort((a,b)=>b.visits-a.visits);
-    root.innerHTML=`<div class="toolbar"><div><h3>Клієнти</h3><span style="color:#aaa">${clients.length} контактів · дані сформовані з історії записів</span></div><input id="client-search" placeholder="Пошук господаря, телефону або улюбленця"></div><div class="card table-wrap"><table class="table"><thead><tr><th>Господар</th><th>Телефон</th><th>Улюбленці</th><th>Візитів</th><th>Останній запис</th></tr></thead><tbody id="client-body">${clients.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.contact)}</td><td>${[...c.pets].map(esc).join(', ')}</td><td>${c.visits}</td><td>${esc(fmt(c.last))}</td></tr>`).join('')||'<tr><td colspan="5">Клієнтів поки немає.</td></tr>'}</tbody></table></div>`;
+    a.forEach(x=>{
+      const key=(x.owner_contact||'').trim().toLowerCase()||x.id;
+      const old=map.get(key);
+      if(!old)map.set(key,{name:x.owner_name||'—',contact:x.owner_contact||'—',pets:new Set([x.pet_name||'—']),visits:[x],last:x.preferred_time});
+      else{
+        if(old.name==='—'&&x.owner_name)old.name=x.owner_name;
+        old.pets.add(x.pet_name||'—');old.visits.push(x);
+        if(new Date(x.preferred_time)>new Date(old.last))old.last=x.preferred_time;
+      }
+    });
+    const clients=[...map.values()].sort((a,b)=>b.visits.length-a.visits.length);
+    root.innerHTML=`<div class="toolbar"><div><h3>Клієнти</h3><span style="color:#aaa">${clients.length} контактів · натисніть на клієнта для повної картки</span></div><input id="client-search" placeholder="Пошук господаря, телефону або улюбленця"></div><div class="card table-wrap"><table class="table"><thead><tr><th>Господар</th><th>Телефон</th><th>Улюбленці</th><th>Візитів</th><th>Останній запис</th><th></th></tr></thead><tbody id="client-body">${clients.map((c,i)=>`<tr data-client-index="${i}" style="cursor:pointer"><td><b>${esc(c.name)}</b></td><td>${esc(c.contact)}</td><td>${[...c.pets].map(esc).join(', ')}</td><td>${c.visits.length}</td><td>${esc(fmt(c.last))}</td><td><button class="small-btn" type="button" data-client-open="${i}">Відкрити</button></td></tr>`).join('')||'<tr><td colspan="6">Клієнтів поки немає.</td></tr>'}</tbody></table></div>`;
     const search=document.getElementById('client-search');
     if(search)search.oninput=()=>{const q=search.value.toLowerCase();document.querySelectorAll('#client-body tr').forEach(tr=>tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none')};
+    const body=document.getElementById('client-body');
+    if(body)body.onclick=e=>{const row=e.target.closest('tr[data-client-index]');if(!row)return;openClientCard(clients[Number(row.dataset.clientIndex)])};
   }
 
   function boot(){
