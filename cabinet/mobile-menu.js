@@ -29,8 +29,15 @@
     if(toggle)toggle.setAttribute('aria-expanded',String(isOpen));
   }
 
+  function syncActive(view){
+    const root=getRoot();
+    if(!root)return;
+    root.querySelectorAll('[data-mobile-view]').forEach(btn=>btn.classList.toggle('active',btn.dataset.mobileView===view));
+  }
+
   function go(view){
     close();
+    syncActive(view);
     const button=document.querySelector(`.sidebar .nav-item[data-view="${view}"]`);
     if(button){button.click();return}
     if(view==='dashboard'&&typeof window.dashboard==='function')window.dashboard();
@@ -62,8 +69,7 @@
 
     const toggle=root.querySelector('.rp-mobile-menu-button');
     toggle.addEventListener('click',toggleMenu,{passive:false});
-    toggle.addEventListener('pointerup',e=>{if(e.pointerType==='touch')toggleMenu(e)},{passive:false});
-    root.querySelector('.rp-mobile-menu-close').addEventListener('click',e=>{e.preventDefault();close()},{passive:false});
+    root.querySelector('.rp-mobile-menu-close').addEventListener('click',e=>{e.preventDefault();e.stopPropagation();close()},{passive:false});
     root.querySelector('.rp-mobile-menu-backdrop').addEventListener('click',close);
     root.querySelectorAll('[data-mobile-view]').forEach(btn=>btn.addEventListener('click',()=>go(btn.dataset.mobileView)));
     root.querySelector('[data-mobile-logout]').addEventListener('click',()=>{
@@ -84,9 +90,16 @@
     updateCount();
     const source=document.getElementById('new-count');
     if(source)new MutationObserver(updateCount).observe(source,{childList:true,characterData:true,subtree:true});
+
+    const syncFromSidebar=()=>{
+      const active=document.querySelector('.sidebar .nav-item.active');
+      if(active)syncActive(active.dataset.view||'');
+    };
+    syncFromSidebar();
+    const nav=document.querySelector('.sidebar nav');
+    if(nav)new MutationObserver(syncFromSidebar).observe(nav,{childList:true,attributes:true,subtree:true});
   }
 
-  function boot(){build()}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
-  else boot();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',build,{once:true});
+  else build();
 })();
