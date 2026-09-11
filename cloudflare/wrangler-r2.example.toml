@@ -1,0 +1,14 @@
+name = "royal-pet-admin-api"
+main = "royal-pet-admin-api-r2.js"
+compatibility_date = "2026-09-11"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "YOUR_D1_DATABASE_NAME"
+database_id = "YOUR_D1_DATABASE_ID"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "YOUR_R2_BUCKET_NAME"
+
+# Keep ADMIN_USERNAME, ADMIN_PASSWORD_HASH and SESSION_SECRET as Worker secrets/variables.
