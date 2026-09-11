@@ -1,0 +1,1 @@
+Temporary note for R2 media delivery diagnostics. Public media URLs use /media?key=... and Worker verifies image size and SHA-256 after R2 write.
