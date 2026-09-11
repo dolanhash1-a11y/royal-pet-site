@@ -1,1 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500"><rect width="500" height="500" fill="#050505"/><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0a8"/><stop offset=".35" stop-color="#d5a33d"/><stop offset=".7" stop-color="#f3cf72"/><stop offset="1" stop-color="#9b6c20"/></linearGradient></defs><circle cx="250" cy="250" r="165" fill="none" stroke="url(#g)" stroke-width="3"/><path d="M94 250c20 52 57 92 111 119 45 22 85 28 120 15 29-11 55-31 82-39 24-7 43-2 63 12-28 11-52 31-78 48-39 25-82 35-128 30-75-9-132-51-170-120z" fill="none" stroke="url(#g)" stroke-width="15" stroke-linecap="round" opacity=".9"/><g fill="url(#g)" font-family="Georgia,serif" font-weight="700"><text x="202" y="275" font-size="115">R</text><text x="255" y="330" font-size="115">P</text></g><g fill="url(#g)" font-family="Arial,sans-serif" font-size="27" font-weight="700" letter-spacing="15"><text x="145" y="105">ROYAL</text><text x="320" y="150" transform="rotate(62 320 150)">PET</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Royal Pet">
+<defs>
+ <radialGradient id="bg" cx="50%" cy="46%" r="58%"><stop offset="0" stop-color="#080808"/><stop offset=".78" stop-color="#020202"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1a6"/><stop offset=".2" stop-color="#ffd25a"/><stop offset=".5" stop-color="#fff5b0"/><stop offset=".72" stop-color="#e6a63b"/><stop offset="1" stop-color="#ffe27a"/></linearGradient>
+ <linearGradient id="gold2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#c78218"/><stop offset=".25" stop-color="#ffe27a"/><stop offset=".52" stop-color="#fff7c4"/><stop offset=".8" stop-color="#f5b942"/><stop offset="1" stop-color="#ffec8a"/></linearGradient>
+ <filter id="glow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="7" result="b"/><feColorMatrix in="b" type="matrix" values="1 0 0 0 .9  0 1 0 0 .55  0 0 1 0 .08  0 0 0 1 0" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="12"/></filter>
+ <path id="arc" d="M 118 298 A 182 182 0 0 1 482 298"/>
+</defs>
+<circle cx="300" cy="300" r="270" fill="url(#bg)"/>
+<circle cx="300" cy="300" r="254" fill="none" stroke="#6e4815" stroke-width="10" opacity=".35" filter="url(#soft)"/>
+<circle cx="300" cy="300" r="248" fill="none" stroke="url(#gold)" stroke-width="6" filter="url(#glow)"/>
+<circle cx="300" cy="300" r="239" fill="none" stroke="url(#gold2)" stroke-width="2.5"/>
+<text fill="url(#gold)" font-family="Georgia,Times New Roman,serif" font-size="46" font-weight="700" letter-spacing="12" filter="url(#glow)"><textPath href="#arc" startOffset="50%" text-anchor="middle">ROYAL PET</textPath></text>
+<g fill="none" stroke="url(#gold2)" stroke-linecap="round" filter="url(#glow)">
+ <path d="M112 356 C125 406 164 454 220 475 C274 496 352 496 414 470 C454 453 480 425 495 392" stroke-width="3"/>
+ <path d="M112 366 C135 416 171 453 221 469 C281 488 349 487 414 462 C452 447 475 421 493 395" stroke-width="2.2"/>
+ <path d="M114 377 C140 421 180 452 226 464 C286 481 349 480 410 456 C447 441 472 416 490 400" stroke-width="1.8"/>
+ <path d="M117 388 C145 426 185 450 232 459 C291 473 349 472 406 451 C442 437 468 413 487 403" stroke-width="1.5"/>
+ <path d="M120 400 C150 431 190 448 238 454 C296 465 349 464 401 447 C437 434 463 413 483 407" stroke-width="1.25"/>
+ <path d="M125 412 C156 437 198 447 244 450 C299 457 347 456 397 443 C429 434 457 416 479 412" stroke-width="1"/>
+</g>
+<g font-family="Georgia,Times New Roman,serif" text-anchor="middle" fill="url(#gold)" filter="url(#glow)">
+ <text x="257" y="348" font-size="178">R</text>
+ <text x="350" y="414" font-size="178">P</text>
+</g>
+<path d="M276 351 C296 368 309 381 327 397" fill="none" stroke="url(#gold2)" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+<path d="M154 161 L164 158 M444 159 L454 163 M126 300 L137 300 M463 300 L474 300 M205 457 L211 464 M389 462 L395 455" stroke="#fff3a0" stroke-width="3" stroke-linecap="round" opacity=".9" filter="url(#glow)"/>
+</svg>
