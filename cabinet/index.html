@@ -1,70 +1,20 @@
 <!doctype html>
 <html lang="uk">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>Royal Pet — Особистий кабінет</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="mobile-menu.css?v=5">
-  <link rel="stylesheet" href="portfolio-view.css?v=3">
-  <link rel="stylesheet" href="portfolio-r2.css?v=3">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Royal Pet — Кабінет</title>
+<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="mobile-menu.css?v=5">
 </head>
 <body>
-  <div id="login" class="login-screen">
-    <div class="login-card">
-      <img src="../assets/royal-pet-logo.svg" alt="Royal Pet" class="login-logo">
-      <div class="gold-label">ROYAL PET</div>
-      <h1>Особистий кабінет</h1>
-      <p>Керування записами, графіком та відгуками</p>
-      <form id="login-form">
-        <label>Логін<input id="login-user" autocomplete="username" required></label>
-        <label>Пароль<input id="login-pass" type="password" autocomplete="current-password" required></label>
-        <button class="gold-button" type="submit">Увійти</button>
-        <div id="login-error" class="error"></div>
-      </form>
-    </div>
-  </div>
-  <div id="app" class="app hidden">
-    <aside class="sidebar">
-      <div class="brand"><img src="../assets/royal-pet-logo.svg" alt="Royal Pet"><span>ROYAL PET</span></div>
-      <nav>
-        <button class="nav-item active" data-view="dashboard">◈ <span>Огляд</span></button>
-        <button class="nav-item" data-view="appointments">▣ <span>Записи</span><b id="new-count">0</b></button>
-        <button class="nav-item" data-view="calendar">▦ <span>Календар</span></button>
-        <button class="nav-item" data-view="hours">◷ <span>Графік</span></button>
-        <button class="nav-item" data-view="reviews">★ <span>Відгуки</span></button>
-        <button class="nav-item" data-view="services">✂ <span>Послуги</span></button>
-      </nav>
-      <button id="logout" class="logout">Вийти</button>
-    </aside>
-    <main class="main">
-      <header class="topbar">
-        <div><span class="gold-label">ROYAL PET</span><h2 id="page-title">Огляд</h2></div>
-        <a href="../" class="site-link">Переглянути сайт ↗</a>
-      </header>
-      <div id="view-dashboard" class="view"></div>
-      <div id="view-appointments" class="view hidden"></div>
-      <div id="view-calendar" class="view hidden"></div>
-      <div id="view-hours" class="view hidden"></div>
-      <div id="view-reviews" class="view hidden"></div>
-      <div id="view-services" class="view hidden"></div>
-    </main>
-  </div>
-  <script src="config.js?v=2"></script>
-  <script src="app.js"></script>
-  <script src="enhancements.js"></script>
-  <script src="pricing-v2.js"></script>
-  <script src="appointment-details-display.js?v=2"></script>
-  <script src="calendar-fix.js?v=4"></script>
-  <script src="pricing-editor.js?v=2"></script>
-  <script src="pricing-add.js?v=1"></script>
-  <script src="mobile-auth.js?v=3"></script>
-  <script src="mobile-menu.js?v=3"></script>
-  <script src="portfolio-view.js?v=3"></script>
-  <script src="mobile-portfolio-menu.js?v=1"></script>
-  <script src="portfolio-r2.js?v=6"></script>
-  <script src="mobile-appointments.js?v=1"></script>
-  <script src="schedule-editor.js?v=1"></script>
+<div id="login" class="login-page"><div class="login-card"><h1>Royal Pet</h1><p>Адміністративний кабінет</p><form id="login-form"><input id="login-user" placeholder="Логін" autocomplete="username" required><input id="login-pass" type="password" placeholder="Пароль" autocomplete="current-password" required><button class="small-btn gold" type="submit">Увійти</button><div id="login-error" class="error"></div></form></div></div>
+<div id="app" class="app hidden">
+<aside class="sidebar"><div class="brand">Royal Pet</div><nav><button class="nav-item active" data-view="dashboard">🏠 <span>Огляд</span></button><button class="nav-item" data-view="appointments">📋 <span>Записи</span><span id="new-count" class="nav-badge">0</span></button><button class="nav-item" data-view="calendar">📅 <span>Календар</span></button><button class="nav-item" data-view="hours">🕐 <span>Графік</span></button><button class="nav-item" data-view="reviews">⭐ <span>Відгуки</span></button><button class="nav-item" data-view="services">✂ <span>Послуги</span></button></nav><button id="logout" class="logout">🚪 Вийти</button></aside>
+<main class="main"><header class="topbar"><h2 id="page-title">Огляд</h2></header><section id="view-dashboard" class="view"></section><section id="view-appointments" class="view hidden"></section><section id="view-calendar" class="view hidden"></section><section id="view-hours" class="view hidden"></section><section id="view-reviews" class="view hidden"></section><section id="view-services" class="view hidden"></section></main></div>
+<script>window.ROYAL_PET_ADMIN_API=window.ROYAL_PET_ADMIN_API||'';</script>
+<script src="app.js?v=9"></script>
+<script src="calendar-fix.js?v=4"></script>
+<script src="mobile-menu.js?v=4"></script>
 </body>
 </html>
