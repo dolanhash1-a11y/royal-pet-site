@@ -1,0 +1,1 @@
+R2 upload implementation note. The portfolio manager now uses a raw binary PUT request for uploads. Images are written to R2 as ArrayBuffer and videos as a stream. This avoids multipart parsing for normal uploads and preserves the original file bytes.
