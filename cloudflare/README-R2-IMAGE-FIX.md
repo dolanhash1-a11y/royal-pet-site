@@ -1,0 +1,1 @@
+R2 image upload fix note: portfolio image uploads should use file.arrayBuffer() for image objects instead of file.stream() to avoid corrupted/truncated image objects. Video uploads can remain stream-based for large files.
