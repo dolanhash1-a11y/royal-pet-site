@@ -11,9 +11,16 @@
       const time=card.querySelector('.appointment-time')?.textContent.replace(/^📅\s*/,'').trim()||'Дата не вказана';
       const breed=card.querySelector('.appointment-top+div')?.textContent.trim()||'Порода не вказана';
       const service=card.querySelector('.appointment-services')?.textContent.replace(/^Послуги\s*/,'').trim()||'Послуги не вказані';
+      const pet=card.querySelector('.appointment-top strong')?.textContent||'Улюбленець';
       const details=document.createElement('div');details.className='appointment-details hidden';
-      details.innerHTML=`<div class="appointment-details-grid"><div><small>Улюбленець</small><b>${esc(card.querySelector('.appointment-top strong')?.textContent||'Улюбленець')}</b></div><div><small>Дата та час</small><b>${esc(time)}</b></div><div><small>Тварина / порода</small><b>${esc(breed)}</b></div><div><small>Послуги</small><b>${esc(service)}</b></div></div>`;
+      details.innerHTML=`<div class="appointment-details-grid"><div><small>Улюбленець</small><b>${esc(pet)}</b></div><div><small>Дата та час</small><b>${esc(time)}</b></div><div><small>Тварина / порода</small><b>${esc(breed)}</b></div><div><small>Послуги</small><b>${esc(service)}</b></div></div>`;
       action.before(details);
+      const status=(card.querySelector('.appointment-top span')?.textContent||'').trim().toLowerCase();
+      if(status==='виконано'&&!action.querySelector('.review-appointment-btn')){
+        const review=document.createElement('button');review.type='button';review.className='ghost review-appointment-btn';review.textContent='Залишити відгук';
+        review.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();localStorage.setItem('royal_pet_review_draft',JSON.stringify({pet,appointmentId:card.dataset.detailsId||'',name:document.querySelector('#profile-name')?.value||''}));location.hash='profile';window.dispatchEvent(new HashChangeEvent('hashchange'));setTimeout(()=>document.getElementById('reviews')?.scrollIntoView({behavior:'smooth',block:'start'}),250)});
+        action.append(review);
+      }
       const open=()=>{const was=!details.classList.contains('hidden');root.querySelectorAll('.appointment-details').forEach(x=>x.classList.add('hidden'));root.querySelectorAll('.appointment-details-toggle').forEach(x=>x.textContent='Деталі');if(was){localStorage.removeItem(key);return}details.classList.remove('hidden');btn.textContent='Сховати';localStorage.setItem(key,card.dataset.detailsId||'');};
       card.dataset.detailsId=card.querySelector('.cancel-btn,.rebook-btn,.reschedule-btn')?.dataset.id||time;
       btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();open()});
