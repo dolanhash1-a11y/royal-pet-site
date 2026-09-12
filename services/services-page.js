@@ -3,7 +3,7 @@ const API=(window.ROYAL_PET_ADMIN_API||'').replace(/\/$/,'');
 const CATEGORIES={
  complex:{title:'Комплекс',text:'Повний комплекс догляду з урахуванням породи та стану шерсті.'},
  hygiene:{title:'Гігієна',text:'Гігієнічні процедури для чистоти, комфорту та здоров’я улюбленця.'},
- adaptive:{title:'Адаптивний грумінг',text:'Дбайливий формат для улюбленців, яким потрібен адаптивний підхід.'},
+ adaptive:{title:'Адаптаційний грумінг',text:'Дбайливий формат для улюбленців, яким потрібен адаптаційний підхід.'},
  additional:{title:'Додаткові послуги',text:'Окремі процедури та доповнення до основного грумінгу.'}
 };
 const KEYS=Object.keys(CATEGORIES);
@@ -13,7 +13,7 @@ function normalizeCategory(x){
  const c=String(x?.category||'').trim().toLowerCase();
  if(c==='complex'||c==='комплекс'||c==='грумінг'||c==='грумінг / комплекс'||c==='комплексний грумінг'||c==='грумінг (комплекс)'||c==='комплексний грумінг / догляд')return'complex';
  if(c==='hygiene'||c==='гігієна'||c==='гігієнічний грумінг')return'hygiene';
- if(c==='adaptive'||c==='адаптивний грумінг')return'adaptive';
+ if(c==='adaptive'||c==='адаптивний грумінг'||c==='адаптаційний грумінг')return'adaptive';
  if(c==='additional'||c==='додаткові послуги')return'additional';
  if(x?.id==='service-1')return'complex';
  if(x?.id==='service-2'||x?.id==='service-3'||x?.id==='service-5')return'hygiene';
