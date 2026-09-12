@@ -6,7 +6,8 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Royal Pet — Особистий кабінет</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="mobile-menu.css?v=6">
+  <link rel="stylesheet" href="mobile-menu.css?v=7">
+  <link rel="stylesheet" href="mobile-fixes.css?v=1">
   <link rel="stylesheet" href="portfolio-view.css?v=3">
   <link rel="stylesheet" href="portfolio-r2.css?v=3">
   <link rel="stylesheet" href="home-editor.css?v=1">
@@ -41,17 +42,19 @@
     </aside>
     <main class="main">
       <header class="topbar">
-        <div><span class="gold-label">ROYAL PET</span><h2 id="page-title">Огляд</h2></div>
-        <a href="../" class="site-link">Переглянути сайт ↗</a>
+        <div><div class="gold-label">ROYAL PET</div><h2 id="page-title">Огляд</h2></div>
+        <div class="top-actions"><a class="site-link" href="../" target="_blank" rel="noopener">Сайт</a><button class="notify-button" id="notify">🔔 <span id="notify-count">0</span></button></div>
       </header>
-      <div id="view-dashboard" class="view"></div>
-      <div id="view-appointments" class="view hidden"></div>
-      <div id="view-calendar" class="view hidden"></div>
-      <div id="view-hours" class="view hidden"></div>
-      <div id="view-reviews" class="view hidden"></div>
-      <div id="view-services" class="view hidden"></div>
+      <section id="view-dashboard" class="view"></section>
+      <section id="view-appointments" class="view hidden"></section>
+      <section id="view-calendar" class="view hidden"></section>
+      <section id="view-hours" class="view hidden"></section>
+      <section id="view-reviews" class="view hidden"></section>
+      <section id="view-services" class="view hidden"></section>
     </main>
   </div>
+  <div id="modal" class="modal-backdrop hidden"></div>
+  <div id="rp-mobile-menu"></div>
   <script src="config.js?v=2"></script>
   <script src="app.js"></script>
   <script src="enhancements.js"></script>
