@@ -9,7 +9,17 @@ const CATEGORIES={
 const KEYS=Object.keys(CATEGORIES);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const img=v=>v&&String(v).startsWith('/uploads/')?'.'+v:String(v||'');
-function normalizeCategory(x){const c=String(x?.category||'').trim().toLowerCase();if(KEYS.includes(c))return c;if(x?.id==='service-1')return 'complex';if(x?.id==='service-2'||x?.id==='service-3')return 'hygiene';if(x?.id==='service-4')return 'adaptive';return 'additional'}
+function normalizeCategory(x){
+ const c=String(x?.category||'').trim().toLowerCase();
+ if(c==='complex'||c==='комплекс'||c==='грумінг'||c==='грумінг / комплекс'||c==='комплексний грумінг'||c==='грумінг (комплекс)'||c==='комплексний грумінг / догляд')return'complex';
+ if(c==='hygiene'||c==='гігієна'||c==='гігієнічний грумінг')return'hygiene';
+ if(c==='adaptive'||c==='адаптивний грумінг')return'adaptive';
+ if(c==='additional'||c==='додаткові послуги')return'additional';
+ if(x?.id==='service-1')return'complex';
+ if(x?.id==='service-2'||x?.id==='service-3'||x?.id==='service-5')return'hygiene';
+ if(x?.id==='service-4')return'adaptive';
+ return'complex';
+}
 async function getServices(){if(API){try{const r=await fetch(`${API}/public/services?sync=${Date.now()}`,{cache:'no-store'});if(r.ok){const d=await r.json();if(Array.isArray(d))return d.filter(x=>x.active!==false)}}catch{}}try{const path=location.pathname.includes('/services/')?'../../content/services.json':'content/services.json';const r=await fetch(`${path}?v=${Date.now()}`,{cache:'no-store'});const d=await r.json();return Array.isArray(d.items)?d.items.filter(x=>x.active!==false):[]}catch{return[]}}
 function card(category,count){const c=CATEGORIES[category];return `<a class="service-category-card" href="services/${category}/"><div class="service-category-number">0${KEYS.indexOf(category)+1}</div><div><h3>${esc(c.title)}</h3><p>${esc(c.text)}${count?` Доступних позицій: ${count}.`:''}</p></div><span class="service-category-arrow">Переглянути →</span></a>`}
 async function home(){const root=document.querySelector('[data-services]');if(!root)return;const items=await getServices();const counts=Object.fromEntries(KEYS.map(k=>[k,0]));items.forEach(x=>counts[normalizeCategory(x)]++);root.className='service-category-grid';root.dataset.serviceCategoriesRendered='1';root.innerHTML=KEYS.map(k=>card(k,counts[k])).join('');}
