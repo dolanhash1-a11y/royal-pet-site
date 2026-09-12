@@ -28,25 +28,13 @@
 <div class="eyebrow">ROYAL PET</div><h2>Мій профіль</h2>
 <div id="profile-auth-note" class="muted">Увійдіть в акаунт, щоб бачити свої записи на будь-якому пристрої.</div>
 <form id="profile-form"><label>Ваше ім'я<input id="profile-name" autocomplete="name" placeholder="Ваше ім'я"></label><label>Телефон<input id="profile-phone" type="tel" autocomplete="tel" placeholder="+380..."></label><button class="primary" type="submit">Зберегти профіль</button></form>
-<div class="profile-pets" id="profile-pets"></div><p class="message" id="profile-message"></p>
+<div class="profile-pets" id="profile-pets"></div><div id="profile-hours" class="profile-hours"></div><p class="message" id="profile-message"></p>
 </section>
 </main><footer>© 2026 Royal Pet · <a href="../booking/">Повна форма запису</a></footer>
 </div>
 <nav class="bottom-nav" aria-label="Навігація додатку"><a href="#home" data-nav="home">⌂<span>Головна</span></a><a href="#booking" data-nav="booking">✦<span>Запис</span></a><a href="#appointments" data-nav="appointments">▣<span>Мої записи</span></a><a href="#profile" data-nav="profile">◯<span>Профіль</span></a></nav>
-<script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';window.ROYAL_PET_CUSTOMER_API='https://royal-pet-customer-api.dolanhash1.workers.dev';</script><script src="app.js?v=4"></script><script src="auth.js?v=8"></script><script src="nav.js?v=2"></script><script>
-(()=>{
-  const root=document.getElementById('services');
-  if(!root)return;
-  root.addEventListener('click',e=>{
-    const card=e.target.closest('.service');
-    if(!card)return;
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    card.classList.toggle('selected');
-    const input=card.querySelector('input');
-    if(input)input.checked=card.classList.contains('selected');
-  },true);
-})();
-window.renderCustomerAuth?.();window.refreshCustomerAppointments?.();
+<script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';window.ROYAL_PET_CUSTOMER_API='https://royal-pet-customer-api.dolanhash1.workers.dev';</script><script src="app.js?v=4"></script><script src="auth.js?v=8"></script><script src="nav.js?v=2"></script><script src="schedule.js?v=1"></script><script>
+(()=>{const root=document.getElementById('services');if(!root)return;root.addEventListener('click',e=>{const card=e.target.closest('.service');if(!card)return;e.preventDefault();e.stopImmediatePropagation();card.classList.toggle('selected');const input=card.querySelector('input');if(input)input.checked=card.classList.contains('selected')},true)})();
+window.renderCustomerAuth?.();window.refreshCustomerAppointments?.();window.renderCustomerSchedule?.();
 </script>
 </body></html>
