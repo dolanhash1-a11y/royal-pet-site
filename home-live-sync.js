@@ -3,12 +3,11 @@ const API=(window.ROYAL_PET_ADMIN_API||'').replace(/\/$/,'');
 const set=(s,v)=>document.querySelectorAll(s).forEach(e=>e.textContent=v??'');
 const attr=(s,a,v)=>document.querySelectorAll(s).forEach(e=>e.setAttribute(a,v??''));
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-let live=null;
 async function get(){
  if(!API)return null;
  for(let i=0;i<4;i++){
   try{
-   const r=await fetch(API+'/public/hours?home='+Date.now(),{cache:'no-store'});
+   const r=await fetch(API+'/public/hours?home='+Date.now(),{cache:'no-store',headers:{'Cache-Control':'no-cache'}});
    if(!r.ok)throw Error('API '+r.status);
    const d=await r.json();
    if(!d.__home__)throw Error('home data missing');
@@ -18,9 +17,7 @@ async function get(){
  return null;
 }
 function apply(h){
- live=h;
  document.documentElement.dataset.homeLive='1';
- const v=Date.now();
  document.title=`${h.name||'Royal Pet'} — грумінг-студія`;
  set('[data-site-name]',h.name);set('[data-site-location]',h.location);set('[data-site-address]',h.address);set('[data-site-phone]',h.phone);
  document.querySelectorAll('[data-site-phone]').forEach(e=>e.href=`tel:${String(h.phone||'').replace(/[^\d+]/g,'')}`);
@@ -35,8 +32,15 @@ function apply(h){
  set('.booking-intro .eyebrow',h.booking_label);set('.booking-intro h2',h.booking_title);const p=document.querySelector('.booking-intro p');if(p)p.textContent=h.booking_text||'';set('.booking-intro .button',h.booking_button);
  set('#contacts .eyebrow',h.contacts_label);set('#contacts h2',h.contacts_title);set('[data-contact-text]',h.contacts_text);set('[data-contact-address-label]',h.address_label?`${h.address_label}:`:'');set('[data-contact-hours-label]',h.hours_label?`${h.hours_label}:`:'');set('[data-contact-phone-label]',h.phone_label?`${h.phone_label}:`:'');
  set('section[aria-labelledby="hours-title"] .eyebrow',h.hours_section_label);set('#hours-title',h.hours_title);set('[data-footer-text]',h.footer_text);set('[data-footer-description]',h.footer_description);set('[data-footer-copyright]',h.footer_copyright);
- const hero=document.querySelector('.hero-photo img');if(hero&&h.hero_image){hero.src=h.hero_image+(h.hero_image.includes('?')?'&':'?')+'v='+v;hero.alt=h.hero_alt||h.name||'Royal Pet'}
+ const box=document.querySelector('.hero-photo');
+ if(box&&h.hero_image){
+  let hero=box.querySelector('img');
+  if(!hero){hero=document.createElement('img');hero.decoding='async';box.innerHTML='';box.appendChild(hero)}
+  hero.hidden=false;
+  hero.src=h.hero_image+(h.hero_image.includes('?')?'&':'?')+'v='+Date.now();
+  hero.alt=h.hero_alt||h.name||'Royal Pet';
+ }
 }
-async function run(){const h=await get();if(h)apply(h);await wait(1500);const fresh=await get();if(fresh)apply(fresh)}
+async function run(){const h=await get();if(h)apply(h)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
