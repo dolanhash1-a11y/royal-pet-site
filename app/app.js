@@ -9,7 +9,7 @@ const breeds={
   cat:['Британська короткошерста','Шотландська висловуха','Мейн-кун','Сибірська','Перська','Бенгальська','Сфінкс','Регдол','Абіссінська','Бірманська','Норвезька лісова','Дворова / метис','Інша порода']
 };
 
-const services=[
+let services=[
   ['complex','Комплекс'],['hygiene','Гігієна'],['adaptive','Адаптація'],
   ['pomeranian-shedding-bath','Вичісування + купання'],['mat-removal','Вичісування ковтунів'],
   ['mat-shaving','Збривання ковтунів'],['bath-up-to-10kg','Купання до 10 кг'],
@@ -23,6 +23,28 @@ const read=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch{r
 const write=data=>localStorage.setItem(STORE,JSON.stringify(data));
 function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function getCustomerToken(){return localStorage.getItem('royal_pet_customer_session')||''}
+
+async function loadBookingConfig(){
+  if(!ADMIN_API)return;
+  try{
+    const r=await fetch(`${ADMIN_API}/public/hours?booking_config=${Date.now()}`,{cache:'no-store'});
+    if(!r.ok)return;
+    const data=await r.json();
+    const raw=data?.__booking_config__;
+    const cfg=typeof raw==='string'?JSON.parse(raw):raw;
+    if(!cfg||typeof cfg!=='object')return;
+    for(const kind of ['dog','cat']){
+      if(Array.isArray(cfg.breeds?.[kind])){
+        const next=cfg.breeds[kind].map(x=>Array.isArray(x)?String(x[0]??'').trim():String(x??'').trim()).filter(Boolean);
+        if(next.length)breeds[kind]=next;
+      }
+    }
+    if(Array.isArray(cfg.services)){
+      const next=cfg.services.map(x=>[String(x?.id||''),String(x?.title||'').trim()]).filter(x=>x[0]&&x[1]);
+      if(next.length)services=next;
+    }
+  }catch{}
+}
 
 function show(n){
   step=n;
@@ -85,7 +107,9 @@ $('form')?.addEventListener('submit',async e=>{
   }catch(err){message.textContent='❌ '+(err.message||'Не вдалося створити запис.')}
 });
 
+$('animal')?.addEventListener('change',()=>{renderBreeds();});
 renderServices();renderBreeds();loadSlots();
+loadBookingConfig().then(()=>{renderServices();renderBreeds()});
 
 window.applyRebookDraft=()=>{
   const raw=localStorage.getItem('royal_pet_rebook_draft');if(!raw||!$('booking')||$('booking').classList.contains('hidden'))return false;
