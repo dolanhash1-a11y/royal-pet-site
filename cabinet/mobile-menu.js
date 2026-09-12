@@ -1,5 +1,5 @@
 (()=>{
-const pages=[['dashboard','🏠','Огляд'],['appointments','📋','Записи'],['calendar','📅','Календар'],['hours','🕐','Графік'],['reviews','⭐','Відгуки'],['services','✂','Послуги'],['clients','👥','Клієнти'],['home-editor','✏️','Головна']];
+const pages=[['dashboard','🏠','Огляд'],['appointments','📋','Записи'],['calendar','📅','Календар'],['hours','🕐','Графік'],['reviews','⭐','Відгуки'],['services','✂','Послуги'],['clients','👥','Клієнти'],['home-editor','✏️','Головна'],['booking-settings','📝','Запис']];
 const root=()=>document.getElementById('rp-mobile-menu');
 const navButton=v=>document.querySelector('.sidebar .nav-item[data-view="'+v+'"]');
 function go(v){
