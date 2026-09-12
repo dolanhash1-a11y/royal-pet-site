@@ -76,6 +76,16 @@ async function loadSlots(){
     m.forEach(x=>{const t=x[1].padStart(2,'0')+':'+x[2],b=document.createElement('button');b.type='button';b.className='slot';b.textContent=t;if(used.has(t)){b.disabled=true;b.classList.add('busy')}b.onclick=()=>{document.querySelectorAll('.slot').forEach(z=>z.classList.remove('selected'));b.classList.add('selected');chosenTime=t};root.append(b)});
   }catch{root.textContent='Не вдалося завантажити вільний час. Оновіть сторінку.'}
 }
+async function isSlotStillAvailable(date,time){
+  if(!ADMIN_API||!date||!time)return true;
+  try{
+    const r=await fetch(`${ADMIN_API}/public/availability?date=${encodeURIComponent(date)}&check=${Date.now()}`,{cache:'no-store'});
+    if(!r.ok)return true;
+    const data=await r.json();
+    const match=(Array.isArray(data?.slots)?data.slots:[]).find(x=>String(x?.time||'')===String(time));
+    return !match||match.status!=='busy';
+  }catch{return true}
+}
 function saveAppointment(payload,serverAppointment=null){
   const data=read();data.appointments=Array.isArray(data.appointments)?data.appointments:[];
   const item=serverAppointment||{id:Date.now(),pet_name:payload.pet_name,animal_type:payload.animal_type,breed:payload.breed,age:payload.age,owner_name:payload.owner_name,owner_contact:payload.owner_contact,preferred_time:payload.preferred_time,services:payload.additional_services,status:'Нова заявка',created_at:new Date().toISOString()};
@@ -118,10 +128,13 @@ document.querySelectorAll('.back').forEach(b=>{b.onclick=()=>show(step-1)});
 $('form')?.addEventListener('submit',async e=>{
   e.preventDefault();const message=$('message'),token=getCustomerToken();
   if(!token){message.textContent='❌ Щоб записатися, спочатку увійдіть або зареєструйте акаунт у «Мої записи».';location.hash='appointments';window.dispatchEvent(new HashChangeEvent('hashchange'));return}
-  message.textContent='Надсилаємо заявку…';
+  message.textContent='Перевіряємо доступність часу…';
   const selected=[...document.querySelectorAll('.service.selected')];
-  const payload={pet_name:$('pet').value.trim(),age:$('age').value.trim(),animal_type:$('animal').value,breed:$('breed').value,owner_name:$('owner').value.trim(),owner_contact:$('phone').value.trim(),last_grooming:'Не вказано',preferred_time:`${$('date').value}T${chosenTime}`,selected_services:selected.map(x=>x.dataset.id).join(','),additional_services:selected.map(x=>x.dataset.name).join(', '),estimated_total:0,home_care:'Поки не цікавить',comment:$('comment').value.trim()};
+  const date=$('date').value;
+  const payload={pet_name:$('pet').value.trim(),age:$('age').value.trim(),animal_type:$('animal').value,breed:$('breed').value,owner_name:$('owner').value.trim(),owner_contact:$('phone').value.trim(),last_grooming:'Не вказано',preferred_time:`${date}T${chosenTime}`,selected_services:selected.map(x=>x.dataset.id).join(','),additional_services:selected.map(x=>x.dataset.name).join(', '),estimated_total:0,home_care:'Поки не цікавить',comment:$('comment').value.trim()};
   try{
+    const available=await isSlotStillAvailable(date,chosenTime);
+    if(!available){message.textContent='❌ Цей час щойно зайняли. Будь ласка, оберіть інший вільний час.';await loadSlots();return}
     const r=await fetch(`${CUSTOMER_API}/customer/appointments`,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
     const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||d.details||`Помилка сервера (${r.status})`);
     saveAppointment(payload,d.appointment||null);message.textContent='✅ Запис успішно створено! Він збережений у «Мої записи»';
