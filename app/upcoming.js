@@ -4,11 +4,13 @@
   const labelDate=d=>{try{return new Intl.DateTimeFormat('uk-UA',{weekday:'long',day:'numeric',month:'long'}).format(new Date(`${d}T12:00:00`)).replace(/^./,x=>x.toUpperCase())}catch{return d}};
   const blocked=s=>['cancelled','canceled','done','completed','rejected'].includes(String(s||'').toLowerCase());
   const reviewStatus=s=>['done','completed'].includes(String(s||'').toLowerCase());
+  function addReviewStyles(){if(document.getElementById('review-reminder-styles'))return;const s=document.createElement('style');s.id='review-reminder-styles';s.textContent='.review-reminder{display:flex;gap:13px;align-items:flex-start;margin:18px 0 2px;padding:16px;border:1px solid rgba(215,173,85,.28);border-radius:18px;background:linear-gradient(145deg,rgba(215,173,85,.095),rgba(255,255,255,.02));box-shadow:0 10px 28px rgba(0,0,0,.16)}.review-reminder-icon{width:40px;height:40px;flex:0 0 40px;border-radius:50%;display:grid;place-items:center;background:rgba(215,173,85,.12);border:1px solid rgba(215,173,85,.28);color:var(--gold);font-size:18px}.review-reminder-body{min-width:0;flex:1}.review-reminder-body strong{display:block;font-size:17px}.review-reminder-body p{margin:4px 0 11px;color:var(--muted);font-size:13px;line-height:1.45}.review-reminder-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.review-reminder-actions .primary,.review-reminder-actions .ghost{margin:0;min-height:42px;padding:10px 11px;font-size:13px}@media(max-width:520px){.review-reminder{padding:14px}.review-reminder-actions{grid-template-columns:1fr}.review-reminder-icon{width:36px;height:36px;flex-basis:36px;font-size:16px}}';document.head.appendChild(s)}
   function reviewNotice(items){
     const profile=document.getElementById('profile-pets');if(!profile)return;
     const old=document.getElementById('profile-review-reminder');if(old)old.remove();
     const list=Array.isArray(items)?items:[];const done=list.filter(x=>reviewStatus(x.status));if(!done.length)return;
     if(localStorage.getItem('royal_pet_review_dismissed')==='1')return;
+    addReviewStyles();
     const item=done[0],pet=esc(item?.pet_name||'вашого улюбленця');
     const notice=document.createElement('section');notice.id='profile-review-reminder';notice.className='review-reminder';
     notice.innerHTML=`<div class="review-reminder-icon">★</div><div class="review-reminder-body"><strong>Як вам грумінг?</strong><p>Залиште короткий відгук про візит ${pet}. Це допомагає нам ставати кращими.</p><div class="review-reminder-actions"><button type="button" class="primary review-go">Залишити відгук</button><button type="button" class="ghost review-later">Не зараз</button></div></div>`;
