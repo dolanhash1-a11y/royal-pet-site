@@ -19,6 +19,7 @@ let services=[
 let step=1;
 let chosenTime='';
 const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 const read=()=>{try{return JSON.parse(localStorage.getItem(STORE)||'{}')}catch{return {}}};
 const write=data=>localStorage.setItem(STORE,JSON.stringify(data));
 function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
@@ -61,7 +62,7 @@ function renderServices(){
 }
 function renderBreeds(){
   const animal=$('animal').value;const list=breeds[animal]||[];
-  $('breed').innerHTML='<option value="">Оберіть породу</option>'+list.map(x=>`<option>${x}</option>`).join('');
+  $('breed').innerHTML='<option value="">Оберіть породу</option>'+list.map(x=>`<option>${esc(x)}</option>`).join('');
 }
 async function loadSlots(){
   const date=$('date').value,root=$('slots');root.innerHTML='';chosenTime='';if(!date)return;
@@ -78,15 +79,36 @@ async function loadSlots(){
 function saveAppointment(payload,serverAppointment=null){
   const data=read();data.appointments=Array.isArray(data.appointments)?data.appointments:[];
   const item=serverAppointment||{id:Date.now(),pet_name:payload.pet_name,animal_type:payload.animal_type,breed:payload.breed,age:payload.age,owner_name:payload.owner_name,owner_contact:payload.owner_contact,preferred_time:payload.preferred_time,services:payload.additional_services,status:'Нова заявка',created_at:new Date().toISOString()};
-  data.appointments.unshift(item);data.profile={...(data.profile||{}),name:payload.owner_name,phone:payload.owner_contact};write(data);
+  data.appointments.unshift(item);data.profile={...(data.profile||{}),name:payload.owner_name,phone:payload.owner_contact};
+  const pets=Array.isArray(data.pets)?data.pets:[];const key=String(payload.pet_name||'').trim().toLowerCase();
+  if(key){const i=pets.findIndex(p=>String(p?.pet_name||'').trim().toLowerCase()===key);const p={pet_name:String(payload.pet_name||'').trim(),animal_type:payload.animal_type||'dog',breed:payload.breed||'',age:payload.age||''};if(i<0)pets.push(p);else pets[i]={...pets[i],...p};data.pets=pets}
+  write(data);
+}
+
+function getSavedPets(){const data=read();return Array.isArray(data.pets)?data.pets:[]}
+function applyPet(p){
+  if(!p)return;
+  $('animal').value=p.animal_type||'dog';renderBreeds();
+  $('pet').value=p.pet_name||'';$('age').value=p.age||'';
+  $('breed').value=p.breed||'';
+}
+function renderPetPicker(){
+  const stepRoot=document.querySelector('.step[data-step="1"]');if(!stepRoot)return;
+  let box=document.getElementById('booking-pet-picker');
+  if(!box){box=document.createElement('div');box.id='booking-pet-picker';box.className='booking-pet-picker';const title=stepRoot.querySelector('h2');title?.insertAdjacentElement('afterend',box)}
+  const pets=getSavedPets();
+  box.innerHTML=`<div class="booking-pet-picker-head"><span>Швидкий вибір</span>${pets.length?'<button type="button" class="picker-new">+ Новий</button>':''}</div>`+
+    (pets.length?`<div class="booking-pet-picker-list">${pets.map((p,i)=>`<button type="button" class="booking-pet-option" data-index="${i}"><span class="pet-icon">${p.animal_type==='cat'?'🐱':'🐶'}</span><span><b>${esc(p.pet_name)}</b><small>${esc(p.breed||'Порода не вказана')}</small></span></button>`).join('')}</div>`:'<div class="booking-pet-picker-empty">У вас ще немає збережених улюбленців. Після першого запису він з’явиться тут.</div>');
+  box.querySelector('.picker-new')?.addEventListener('click',()=>{ $('animal').value='';renderBreeds();$('pet').value='';$('breed').value='';$('age').value=''; });
+  box.querySelectorAll('.booking-pet-option').forEach(btn=>btn.addEventListener('click',()=>{const p=pets[+btn.dataset.index];applyPet(p);box.querySelectorAll('.booking-pet-option').forEach(x=>x.classList.remove('selected'));btn.classList.add('selected')}));
 }
 
 window.renderCustomerAppointments=window.renderCustomerAppointments||(()=>{});
 window.renderCustomerProfile=window.renderCustomerProfile||(()=>{});
 
 $('profile-form')?.addEventListener('submit',e=>{e.preventDefault();const data=read();data.profile={name:$('profile-name').value.trim(),phone:$('profile-phone').value.trim()};write(data);$('profile-message').textContent='✅ Профіль збережено';setTimeout(()=>$('profile-message').textContent='',1800)});
-$('start')?.addEventListener('click',()=>{location.hash='booking';window.dispatchEvent(new HashChangeEvent('hashchange'));$('booking')?.scrollIntoView({behavior:'smooth'})});
-$('newBooking')?.addEventListener('click',()=>{location.hash='booking';window.dispatchEvent(new HashChangeEvent('hashchange'))});
+$('start')?.addEventListener('click',()=>{location.hash='booking';window.dispatchEvent(new HashChangeEvent('hashchange'));$('booking')?.scrollIntoView({behavior:'smooth'});setTimeout(renderPetPicker,80)});
+$('newBooking')?.addEventListener('click',()=>{location.hash='booking';window.dispatchEvent(new HashChangeEvent('hashchange'));setTimeout(renderPetPicker,80)});
 $('animal')?.addEventListener('change',renderBreeds);
 $('date').min=today();if(!$('date').value)$('date').value=today();$('date').addEventListener('change',loadSlots);
 
@@ -103,7 +125,7 @@ $('form')?.addEventListener('submit',async e=>{
     const r=await fetch(`${CUSTOMER_API}/customer/appointments`,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
     const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.error||d.details||`Помилка сервера (${r.status})`);
     saveAppointment(payload,d.appointment||null);message.textContent='✅ Запис успішно створено! Він збережений у «Мої записи»';
-    setTimeout(()=>{document.getElementById('form').reset();chosenTime='';document.querySelectorAll('.service.selected').forEach(x=>x.classList.remove('selected'));show(1);location.hash='appointments';window.dispatchEvent(new HashChangeEvent('hashchange'));window.refreshCustomerAppointments?.();window.renderCustomerAppointments?.()},700);
+    setTimeout(()=>{document.getElementById('form').reset();chosenTime='';document.querySelectorAll('.service.selected').forEach(x=>x.classList.remove('selected'));show(1);renderPetPicker();location.hash='appointments';window.dispatchEvent(new HashChangeEvent('hashchange'));window.refreshCustomerAppointments?.();window.renderCustomerAppointments?.()},700);
   }catch(err){message.textContent='❌ '+(err.message||'Не вдалося створити запис.')}
 });
 
@@ -121,7 +143,8 @@ window.applyRebookDraft=()=>{
   const names=String(draft.additional_services||'').split(',').map(x=>x.trim()).filter(Boolean);
   document.querySelectorAll('.service').forEach(card=>{const yes=names.includes(String(card.dataset.name||''));card.classList.toggle('selected',yes);const input=card.querySelector('input');if(input)input.checked=yes});
   const p=read().profile||{};if($('owner')&&!$('owner').value)$('owner').value=p.name||'';if($('phone')&&!$('phone').value)$('phone').value=p.phone||'';
-  localStorage.removeItem('royal_pet_rebook_draft');return true;
+  localStorage.removeItem('royal_pet_rebook_draft');renderPetPicker();return true;
 };
-window.addEventListener('hashchange',()=>{if(location.hash.slice(1)==='booking')setTimeout(()=>window.applyRebookDraft?.(),60)});
+window.addEventListener('hashchange',()=>{if(location.hash.slice(1)==='booking')setTimeout(()=>{window.applyRebookDraft?.();renderPetPicker()},60)});
+setTimeout(renderPetPicker,180);
 })();
