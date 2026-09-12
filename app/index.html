@@ -16,7 +16,7 @@
 <form id="form">
 <div class="step" data-step="1"><h2>Ваш улюбленець</h2><label>Тип тварини<select id="animal" required><option value="">Оберіть</option><option value="dog">🐶 Собака</option><option value="cat">🐱 Кіт</option></select></label><label>Ім'я<input id="pet" required placeholder="Наприклад, Боня"></label><label>Порода<select id="breed" required><option value="">Спочатку оберіть тварину</option></select></label><label>Вік<input id="age" required placeholder="Наприклад, 3 роки"></label><button type="button" class="primary next">Далі</button></div>
 <div class="step hidden" data-step="2"><h2>Послуга та час</h2><div class="services" id="services"></div><label>Дата<input id="date" type="date" required></label><div id="slots" class="slots"></div><button type="button" class="ghost back">Назад</button><button type="button" class="primary next">Далі</button></div>
-<div class="step hidden" data-step="3"><h2>Контакти</h2><label>Ваше ім'я<input id="owner" required placeholder="Ім'я господаря"></label><label>Телефон<input id="phone" required placeholder="+380..."></label><label>Коментар<textarea id="comment" rows="3" placeholder="Побажання або особливості"></textarea></label><div class="summary" id="summary"></div><button type="button" class="ghost back">Назад</button><button class="primary" type="submit">Підтвердити запис</button></div>
+<div class="step hidden" data-step="3"><h2>Контакти</h2><label>Ваше ім'я<input id="owner" required placeholder="Ім'я господаря"></label><label>Телефон<input id="phone" required placeholder="+380..."></label><label>Коментар><textarea id="comment" rows="3" placeholder="Побажання або особливості"></textarea></label><div class="summary" id="summary"></div><button type="button" class="ghost back">Назад</button><button class="primary" type="submit">Підтвердити запис</button></div>
 <p class="message" id="message"></p>
 </form></section>
 <section class="booking-card hidden app-view" id="appointments-view" data-view="appointments">
@@ -33,5 +33,5 @@
 </main><footer>© 2026 Royal Pet · <a href="../booking/">Повна форма запису</a></footer>
 </div>
 <nav class="bottom-nav" aria-label="Навігація додатку"><a href="#home" data-nav="home">⌂<span>Головна</span></a><a href="#booking" data-nav="booking">✦<span>Запис</span></a><a href="#appointments" data-nav="appointments">▣<span>Мої записи</span></a><a href="#profile" data-nav="profile">◯<span>Профіль</span></a></nav>
-<script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';window.ROYAL_PET_CUSTOMER_API=window.ROYAL_PET_ADMIN_API;</script><script src="app.js?v=2"></script><script src="auth.js?v=1"></script><script src="nav.js?v=2"></script><script>window.renderCustomerAuth?.();window.refreshCustomerAppointments?.();</script>
+<script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';window.ROYAL_PET_CUSTOMER_API='https://royal-pet-customer-api.dolanhash1.workers.dev';</script><script src="app.js?v=2"></script><script src="auth.js?v=1"></script><script src="nav.js?v=2"></script><script>window.renderCustomerAuth?.();window.refreshCustomerAppointments?.();</script>
 </body></html>
