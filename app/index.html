@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111111"><meta name="description" content="Royal Pet — додаток для запису на грумінг.">
+<title>Royal Pet — Додаток</title><link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="app-shell">
+<header class="app-header"><a class="brand" href="../"><img src="../assets/royal-pet-logo.svg" alt="Royal Pet"><span>ROYAL PET</span></a><a class="site" href="../">Сайт</a></header>
+<main>
+<section class="hero-card"><div class="eyebrow">ROYAL PET APP</div><h1>Турбота про улюбленця — в кілька натискань</h1><p>Запишіть собаку або котика на грумінг, оберіть послугу, дату та вільний час.</p><button class="primary" id="start">Записатися</button></section>
+<section class="booking-card hidden" id="booking">
+<div class="progress"><span class="active" id="p1"></span><span id="p2"></span><span id="p3"></span></div>
+<form id="form">
+<div class="step" data-step="1"><h2>Ваш улюбленець</h2><label>Тип тварини<select id="animal" required><option value="">Оберіть</option><option value="dog">🐶 Собака</option><option value="cat">🐱 Кіт</option></select></label><label>Ім'я<input id="pet" required placeholder="Наприклад, Боня"></label><label>Порода<select id="breed" required><option value="">Спочатку оберіть тварину</option></select></label><label>Вік<input id="age" required placeholder="Наприклад, 3 роки"></label><button type="button" class="primary next">Далі</button></div>
+<div class="step hidden" data-step="2"><h2>Послуга та час</h2><div class="services" id="services"></div><label>Дата<input id="date" type="date" required></label><div id="slots" class="slots"></div><button type="button" class="ghost back">Назад</button><button type="button" class="primary next">Далі</button></div>
+<div class="step hidden" data-step="3"><h2>Контакти</h2><label>Ваше ім'я<input id="owner" required placeholder="Ім'я господаря"></label><label>Телефон<input id="phone" required placeholder="+380..."></label><label>Коментар<textarea id="comment" rows="3" placeholder="Побажання або особливості"></textarea></label><div class="summary" id="summary"></div><button type="button" class="ghost back">Назад</button><button class="primary" type="submit">Підтвердити запис</button></div>
+<p class="message" id="message"></p>
+</form></section>
+</main><footer>© 2026 Royal Pet · <a href="../booking/">Повна форма запису</a></footer>
+</div><script>window.ROYAL_PET_ADMIN_API='https://royal-pet-admin-api.dolanhash1.workers.dev';</script><script src="app.js?v=1"></script>
+</body></html>
