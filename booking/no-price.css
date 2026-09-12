@@ -1,0 +1,5 @@
+/* Booking page: prices are managed and displayed on the homepage only. */
+.live-row b,
+.live-summary-total,
+.booking-price,
+[data-estimated-total]{display:none!important}
