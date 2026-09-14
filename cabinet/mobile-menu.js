@@ -6,11 +6,22 @@ const API=(window.ROYAL_PET_ADMIN_API||'').replace(/\/$/,'');
 const esc=v=>String(v??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 function go(v){
   if(v==='clients'&&typeof window.royalPetShowClients==='function'){window.royalPetShowClients();sync();return}
+  if(v==='calendar'&&typeof window.royalPetCalendar==='function'){window.royalPetCalendar();sync();return}
   const b=navButton(v);if(b)b.click();else setTimeout(()=>{const x=navButton(v);if(x)x.click()},200);sync()
 }
 function sync(){const r=root();if(!r)return;const active=document.querySelector('.sidebar .nav-item.active')?.dataset.view;r.querySelectorAll('[data-mobile-view]').forEach(b=>b.classList.toggle('active',b.dataset.mobileView===active));const n=Number(document.getElementById('new-count')?.textContent||0);const badge=r.querySelector('[data-mobile-count="appointments"]');if(badge){badge.hidden=!n;badge.textContent=String(n)}}
 function build(){let r=root();if(!r){r=document.createElement('nav');r.id='rp-mobile-menu';document.body.appendChild(r)}let html='<div class="rp-mobile-menu-scroll">';pages.forEach(p=>{html+='<button class="rp-mobile-menu-item" type="button" data-mobile-view="'+p[0]+'"><span class="mi-icon">'+p[1]+'</span><span class="mi-label">'+p[2]+'</span><span class="mi-badge" data-mobile-count="'+p[0]+'" hidden></span></button>'});html+='<button class="rp-mobile-menu-item rp-mobile-menu-logout" type="button" data-mobile-logout="1"><span class="mi-icon">🚪</span><span class="mi-label">Вийти</span></button></div>';r.innerHTML=html;
 const scroll=r.querySelector('.rp-mobile-menu-scroll');r.querySelectorAll('[data-mobile-view]').forEach(b=>b.onclick=()=>go(b.dataset.mobileView));r.querySelector('[data-mobile-logout]')?.addEventListener('click',()=>document.getElementById('logout')?.click());let down=false,startX=0,startScroll=0;scroll.addEventListener('pointerdown',e=>{down=true;startX=e.clientX;startScroll=scroll.scrollLeft;scroll.setPointerCapture?.(e.pointerId)});scroll.addEventListener('pointermove',e=>{if(down)scroll.scrollLeft=startScroll-(e.clientX-startX)});scroll.addEventListener('pointerup',()=>down=false);scroll.addEventListener('pointercancel',()=>down=false);window.rpMobileMenuSync=sync;sync()}
+function navigationBridge(){
+  document.addEventListener('click',e=>{
+    const b=e.target.closest?.('.sidebar .nav-item[data-view="clients"],.sidebar .nav-item[data-view="calendar"]');
+    if(!b)return;
+    const v=b.dataset.view;
+    const fn=v==='clients'?window.royalPetShowClients:window.royalPetCalendar;
+    if(typeof fn!=='function')return;
+    e.preventDefault();e.stopImmediatePropagation();fn();sync();
+  },true);
+}
 async function markNoShow(id){
   if(!API||!id)return;
   const r=await fetch(API+'/appointments/'+encodeURIComponent(id),{method:'PATCH',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'no_show'})});
@@ -43,13 +54,11 @@ function bindNoShow(){
     btn.disabled=true;
     try{
       await markNoShow(btn.dataset.noShow);
-      const badge=view.querySelector(`tr:has([data-no-show="${CSS.escape(btn.dataset.noShow)}"]) .badge`);
-      if(badge){badge.className='badge no_show';badge.textContent=noShowStatusText()}
+      const row=btn.closest('tr');const badge=row?.querySelector('.badge');if(badge){badge.className='badge no_show';badge.textContent=noShowStatusText()}
       btn.remove();
-      document.getElementById('new-count')?.dispatchEvent(new Event('change'));
     }catch(err){alert(err.message||'Не вдалося змінити статус');btn.disabled=false}
   });
   injectNoShow();
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{build();bindNoShow()},{once:true});else{build();bindNoShow()}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{build();bindNoShow();navigationBridge()},{once:true});else{build();bindNoShow();navigationBridge()}
 })();
