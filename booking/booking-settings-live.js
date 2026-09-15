@@ -1,7 +1,7 @@
 (()=>{
 'use strict';
 const API=(window.ROYAL_PET_ADMIN_API||'').replace(/\/$/,'');
-const V='booking-services-20260916-v3';
+const V='booking-services-20260916-v4';
 const GROUP_MARKERS=new Set(['комплекс','гігієна','адаптація','адаптаційний грумінг','додаткові послуги']);
 const FALLBACK={breeds:{dog:[['Йоркширський тер’єр','small'],['Померанський шпіц','small'],['Шпіц німецький','small'],['Мальтіпу','small'],['Мальтезе','small'],['Той-пудель','small'],['Чихуахуа','small'],['Той-тер’єр','small'],['Пекінес','small'],['Ши-тцу','small'],['Французький бульдог','small'],['Мопс','small'],['Джек-рассел-тер’єр','small'],['Кавалер-кінг-чарльз-спанієль','small'],['Кокер-спанієль','medium'],['Бігль','medium'],['Шарпей','medium'],['Бордер-колі','medium'],['Австралійська вівчарка','medium'],['Самоїд','medium'],['Середній пудель','medium'],['Басенджі','medium'],['Лабрадор-ретривер','large'],['Золотистий ретривер','large'],['Німецька вівчарка','large'],['Хаскі','large'],['Маламут','large'],['Доберман','large'],['Ротвейлер','large'],['Боксер','large'],['Далматинець','large'],['Великий пудель','large'],['Бернський зенненхунд','large'],['Ньюфаундленд','large'],['Алабай','large'],['Інша порода','other']],cat:[['Британська короткошерста','medium'],['Шотландська висловуха','medium'],['Мейн-кун','large'],['Сибірська','medium'],['Перська','medium'],['Бенгальська','medium'],['Сфінкс','medium'],['Регдол','medium'],['Абіссінська','small'],['Бірманська','medium'],['Норвезька лісова','large'],['Орієнтальна','small'],['Дворова / метис','medium'],['Інша порода','other']]}};
 const text=v=>String(v??'').trim().toLowerCase();
@@ -17,19 +17,7 @@ function animalOf(x){
 }
 function cleanServices(list){
   const seen=new Set();
-  return (Array.isArray(list)?list:[]).filter(x=>x&&x.active!==false).map(x=>({
-    id:String(x?.id||x?.title||''),
-    title:String(x?.title||'').trim(),
-    price:x?.price,
-    category:x?.category,
-    animal:x?.animal,
-    pet_type:x?.pet_type,
-    animal_type:x?.animal_type,
-    group:x?.group||x?.service_group,
-    description:x?.description,
-    duration:x?.duration,
-    order:x?.order
-  })).filter(x=>x.id&&x.title&&x.title.length<180&&!GROUP_MARKERS.has(x.title.toLowerCase())).filter(x=>{const key=`${animalOf(x)}|${x.title.toLowerCase()}`;if(seen.has(key))return false;seen.add(key);return true});
+  return (Array.isArray(list)?list:[]).filter(x=>x&&x.active!==false).map(x=>({id:String(x?.id||x?.title||''),title:String(x?.title||'').trim(),price:x?.price,category:x?.category,animal:x?.animal,pet_type:x?.pet_type,animal_type:x?.animal_type,group:x?.group||x?.service_group,description:x?.description,duration:x?.duration,order:x?.order})).filter(x=>x.id&&x.title&&x.title.length<180&&!GROUP_MARKERS.has(x.title.toLowerCase())).filter(x=>{const key=`${animalOf(x)}|${x.title.toLowerCase()}`;if(seen.has(key))return false;seen.add(key);return true});
 }
 async function loadConfig(){
   const c={...FALLBACK,services:[]};
@@ -55,6 +43,7 @@ function init(c){
     if(totalField)totalField.value=String(sum);
     if(summary)summary.textContent=names.length?names.join(' • '):'Поки нічого не обрано';
     if(trigger)trigger.textContent=names.length?`Обрано послуг: ${names.length}`:'Оберіть одну або кілька послуг';
+    menu.querySelectorAll('.live-row').forEach(row=>{const box=row.querySelector('input[type="checkbox"]');if(box){row.setAttribute('aria-checked',box.checked?'true':'false');row.classList.toggle('is-selected',box.checked)}});
   };
   const renderServices=()=>{
     const available=availableServices();
@@ -62,22 +51,25 @@ function init(c){
     if(!animal.value){menu.innerHTML='<div class="live-empty">Спочатку оберіть тип тварини</div>';update();return}
     if(!available.length){menu.innerHTML='<div class="live-empty">Для цієї тварини послуги ще не додані.</div>';update();return}
     available.slice().sort((a,b)=>(Number(a.order)||0)-(Number(b.order)||0)||a.title.localeCompare(b.title,'uk')).forEach(x=>{
-      const row=document.createElement('label');
+      const row=document.createElement('div');
       row.className='live-row';
+      row.setAttribute('role','checkbox');
+      row.setAttribute('aria-checked','false');
+      row.tabIndex=0;
       row.setAttribute('data-service-id',x.id);
       const box=document.createElement('input');
       box.type='checkbox';
       box.name='service_choice';
       box.value=x.id;
-      box.dataset.price=String(x.price??'');
-      box.setAttribute('aria-label',x.title);
+      box.tabIndex=-1;
+      box.setAttribute('aria-hidden','true');
       const name=document.createElement('span');
+      name.className='live-service-name';
       name.textContent=x.title;
-      const price=document.createElement('span');
-      price.className='live-row-price';
-      price.textContent='';
-      row.append(box,name,price);
-      box.addEventListener('change',update);
+      row.append(box,name);
+      const toggle=()=>{box.checked=!box.checked;update()};
+      row.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggle()});
+      row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();e.stopPropagation();toggle()}});
       menu.appendChild(row);
     });
     update();
@@ -89,7 +81,7 @@ function init(c){
   document.addEventListener('click',e=>{if(picker&&!picker.contains(e.target))menu.hidden=true});
   renderBreeds();
   renderServices();
-  const s=document.createElement('style');s.id='booking-live-services-v3';s.textContent='.live-row{display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;align-items:center!important;gap:10px!important;user-select:none;cursor:pointer}.live-row input{display:block!important;opacity:1!important;visibility:visible!important;width:18px!important;height:18px!important;margin:0!important;pointer-events:auto!important;cursor:pointer}.live-row-price{display:none}.live-empty{padding:14px 10px;opacity:.7;text-align:center}';if(!document.getElementById(s.id))document.head.appendChild(s);
+  const s=document.createElement('style');s.id='booking-live-services-v4';s.textContent='.live-row{display:grid!important;grid-template-columns:22px minmax(0,1fr)!important;align-items:center!important;gap:10px!important;user-select:none;cursor:pointer;pointer-events:auto!important}.live-row input{display:block!important;opacity:1!important;visibility:visible!important;width:18px!important;height:18px!important;margin:0!important;pointer-events:none!important;cursor:pointer}.live-row.is-selected{background:rgba(215,173,85,.14);box-shadow:inset 0 0 0 1px rgba(215,173,85,.28)}.live-row:focus{outline:2px solid rgba(215,173,85,.45);outline-offset:-2px}.live-service-name{min-width:0}.live-empty{padding:14px 10px;opacity:.7;text-align:center}';if(!document.getElementById(s.id))document.head.appendChild(s);
 }
 async function start(){for(let i=0;i<50;i++){if(document.querySelector('[name="animal_type"]')&&document.querySelector('[name="breed"]')&&document.querySelector('.live-service'))break;await new Promise(r=>setTimeout(r,100))}const c=await loadConfig();init(c)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
