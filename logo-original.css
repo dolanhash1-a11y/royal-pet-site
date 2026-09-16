@@ -1,0 +1,10 @@
+/* Royal Pet — original logo artwork
+   The image itself is not altered. This stylesheet only controls placement/size. */
+.logo{gap:0;display:inline-flex;align-items:center}
+.logo img{width:64px;height:64px;display:block;flex:0 0 64px;object-fit:contain;border-radius:0}
+.logo span[data-site-name]{display:none}
+footer .logo img{width:64px;height:64px;flex-basis:64px}
+@media(max-width:650px){
+  .logo img{width:54px;height:54px;flex-basis:54px}
+  footer .logo img{width:54px;height:54px;flex-basis:54px}
+}
