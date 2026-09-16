@@ -22,12 +22,12 @@
       <div class="intro">
         <span class="eyebrow">ROYAL PET · ОНЛАЙН-ЗАПИС</span>
         <h1 id="booking-title">Запишіть улюбленця<br><em>на грумінг</em></h1>
-        <p>Заповніть коротку форму — ми зв’яжемося з вами, щоб узгодити деталі та час візиту.</p>
+        <p>Оберіть послугу, зручну дату та доступний час. Заявка одразу потрапить у розділ «Записи» кабінету Royal Pet.</p>
 
         <div class="trust-list">
           <div><span>01</span><p><strong>Оберіть улюбленця</strong><small>Розкажіть нам трохи про нього</small></p></div>
-          <div><span>02</span><p><strong>Оберіть послугу</strong><small>Можна вибрати декілька</small></p></div>
-          <div><span>03</span><p><strong>Отримайте підтвердження</strong><small>Ми зв’яжемося з вами</small></p></div>
+          <div><span>02</span><p><strong>Оберіть послугу та час</strong><small>Доступність синхронізована з кабінетом</small></p></div>
+          <div><span>03</span><p><strong>Отримайте підтвердження</strong><small>Заявка з’явиться у розділі «Записи»</small></p></div>
         </div>
       </div>
 
@@ -45,7 +45,7 @@
         <div class="fields">
           <label>Ім’я улюбленця<input name="pet_name" required placeholder="Наприклад, Боня"></label>
           <label>Вік<input name="pet_age" placeholder="Наприклад, 3 роки"></label>
-          <label>Порода<input name="breed" placeholder="Наприклад, мальтіпу"></label>
+          <label>Порода<select name="breed" id="breed"><option value="">Оберіть породу</option></select></label>
           <label>Розмір<input name="size" placeholder="Маленький / середній / великий"></label>
         </div>
 
@@ -54,19 +54,29 @@
         <div class="form-head compact">
           <span>Крок 2</span>
           <h2>Оберіть послугу</h2>
-          <p>Можна обрати декілька варіантів.</p>
+          <p>Список синхронізований з налаштуваннями «Запис» у кабінеті.</p>
         </div>
         <div class="services" id="services">
-          <label class="service-option"><input type="checkbox" name="services" value="Комплексний грумінг"><span><b>Комплексний грумінг</b><small>Повний догляд за шерстю</small></span><i>›</i></label>
-          <label class="service-option"><input type="checkbox" name="services" value="Стрижка"><span><b>Стрижка</b><small>Форма та довжина на ваш вибір</small></span><i>›</i></label>
-          <label class="service-option"><input type="checkbox" name="services" value="Гігієнічний догляд"><span><b>Гігієнічний догляд</b><small>Лапки, кігті, вушка та інше</small></span><i>›</i></label>
-          <label class="service-option"><input type="checkbox" name="services" value="Купання та сушка"><span><b>Купання та сушка</b><small>Делікатна косметика та сушка</small></span><i>›</i></label>
+          <div class="loading-state">Завантажуємо послуги…</div>
         </div>
 
         <div class="divider"></div>
 
         <div class="form-head compact">
           <span>Крок 3</span>
+          <h2>Оберіть дату та час</h2>
+          <p>Показуємо лише час у межах робочого графіка та без уже зайнятих записів.</p>
+        </div>
+        <div class="fields booking-datetime">
+          <label>Дата<input name="date" id="booking-date" type="date" required></label>
+          <label>Час<select name="time" id="booking-time" required><option value="">Спочатку оберіть дату</option></select></label>
+        </div>
+        <div id="availability-message" class="message" aria-live="polite"></div>
+
+        <div class="divider"></div>
+
+        <div class="form-head compact">
+          <span>Крок 4</span>
           <h2>Ваші контакти</h2>
         </div>
         <div class="fields">
@@ -78,7 +88,7 @@
 
         <div class="form-footer">
           <p>Надсилаючи заявку, ви погоджуєтесь на зв’язок для підтвердження запису.</p>
-          <button class="submit" type="submit">Надіслати заявку <span>→</span></button>
+          <button class="submit" id="submit-button" type="submit">Надіслати заявку <span>→</span></button>
         </div>
         <div id="form-message" class="message" aria-live="polite"></div>
       </form>
@@ -87,22 +97,6 @@
 
   <footer><span>Royal Pet</span><span>Професійний догляд для собак та котиків</span></footer>
 
-  <script>
-    const form = document.getElementById('booking-form');
-    const message = document.getElementById('form-message');
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      if (!form.reportValidity()) return;
-      const services = [...form.querySelectorAll('input[name="services"]:checked')];
-      if (!services.length) {
-        message.className = 'message error';
-        message.textContent = 'Будь ласка, оберіть хоча б одну послугу.';
-        document.getElementById('services').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
-      message.className = 'message success';
-      message.textContent = 'Дякуємо! Заявку заповнено. Наступним кроком підключимо її відправлення до системи Royal Pet.';
-    });
-  </script>
+  <script src="booking.js?v=1"></script>
 </body>
 </html>
