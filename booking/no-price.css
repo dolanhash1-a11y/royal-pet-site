@@ -1,5 +1,6 @@
-/* Booking page: prices are managed and displayed on the homepage only. */
+/* On the booking page prices remain hidden; price data is used only for internal total calculation. */
 .live-row b,
 .live-summary-total,
 .booking-price,
-[data-estimated-total]{display:none!important}
+[data-estimated-total],
+.rp-service-price{display:none!important}
