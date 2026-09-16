@@ -13,9 +13,9 @@
   const submitButton = document.getElementById('submit-button');
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   const CAT_WORDS = ['кіт', 'коти', 'котик', 'котики', 'коты', 'cat', 'cats', 'feline'];
-  let config = { breeds: { dog: [], cat: [] }, services: [] }, appointments = [], hours = {};
+  let config = { breeds: { dog: [], cat: [] }, services: [], dogServices: [], catServices: [] }, appointments = [], hours = {};
 
-  const esc = v => String(v ?? '').replace(/[&<>"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;' }[m]));
+  const esc = v => String(v ?? '').replace(/[&<>\"']/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;', "'":'&#039;' }[m]));
   const text = v => String(v ?? '').trim().toLowerCase();
 
   async function api(path, options = {}) {
@@ -52,12 +52,29 @@
     return 'all';
   }
 
+  function normalizeService(service, index, animal = 'all') {
+    if (typeof service === 'string') return { id: `service-${index + 1}`, title: service.trim(), animal };
+    return {
+      id: String(service?.id || `service-${index + 1}`),
+      title: String(service?.title || service?.name || '').trim(),
+      category: service?.category,
+      animal: service?.animal ?? animal,
+      pet_type: service?.pet_type,
+      animal_type: service?.animal_type,
+      animal_type_label: service?.animal_type_label,
+      petType: service?.petType,
+      type: service?.type,
+      active: service?.active !== false
+    };
+  }
+
   async function loadConfig() {
     try {
       const d = await api('/hours?booking_config=' + Date.now());
       const raw = d && d[CONFIG_KEY];
       if (!raw) return;
       const saved = typeof raw === 'string' ? JSON.parse(raw) : raw;
+
       if (saved?.breeds && typeof saved.breeds === 'object') {
         for (const kind of ['dog', 'cat']) {
           if (Array.isArray(saved.breeds[kind])) {
@@ -67,20 +84,23 @@
           }
         }
       }
+
+      // Новий формат: окремі списки послуг для собак і котів.
+      if (Array.isArray(saved?.dogServices)) {
+        config.dogServices = saved.dogServices
+          .map((service, index) => normalizeService(service, index, 'dog'))
+          .filter(service => service.title && service.active);
+      }
+      if (Array.isArray(saved?.catServices)) {
+        config.catServices = saved.catServices
+          .map((service, index) => normalizeService(service, index, 'cat'))
+          .filter(service => service.title && service.active);
+      }
+
+      // Старий формат services залишаємо для сумісності.
       if (Array.isArray(saved?.services)) {
         config.services = saved.services
-          .map((service, index) => ({
-            id: String(service?.id || `service-${index + 1}`),
-            title: String(service?.title || '').trim(),
-            category: service?.category,
-            animal: service?.animal,
-            pet_type: service?.pet_type,
-            animal_type: service?.animal_type,
-            animal_type_label: service?.animal_type_label,
-            petType: service?.petType,
-            type: service?.type,
-            active: service?.active !== false
-          }))
+          .map((service, index) => normalizeService(service, index))
           .filter(service => service.title && service.active);
       }
     } catch (error) {
@@ -89,12 +109,21 @@
   }
 
   function renderServices() {
-    const list = Array.isArray(config.services) ? config.services : [];
     const petType = form.querySelector('input[name="pet_type"]:checked')?.value === 'Кіт' ? 'cat' : 'dog';
-    const visible = list.filter(service => {
-      const animal = animalOfService(service);
-      return animal === 'all' || animal === petType;
-    });
+
+    // Спочатку використовуємо нові окремі списки з кабінету.
+    let list = petType === 'cat' ? config.catServices : config.dogServices;
+
+    // Якщо окремий список ще не збережений — використовуємо старий services.
+    if (!Array.isArray(list) || !list.length) {
+      list = (Array.isArray(config.services) ? config.services : []).filter(service => {
+        const animal = animalOfService(service);
+        return animal === 'all' || animal === petType;
+      });
+    }
+
+    const visible = list.filter(service => service && service.title && service.active !== false);
+
     servicesRoot.innerHTML = visible.length
       ? visible.map(service => `<label class="service-option"><input type="checkbox" name="services" value="${esc(service.title)}"><span><b>${esc(service.title)}</b><small>${petType === 'cat' ? 'Royal Pet · догляд за котиком' : 'Royal Pet · догляд за улюбленцем'}</small></span><i>›</i></label>`).join('')
       : '<div class="loading-state">У кабінеті ще не додано послуг для цього типу тварини.</div>';
@@ -190,8 +219,6 @@
       return;
     }
 
-    // ВАЖЛИВО: API очікує локальний час салону без UTC-конвертації.
-    // toISOString() зміщував час на UTC і через це сервер повертав invalid_or_unavailable_time.
     const preferredTime = `${dateInput.value}T${timeSelect.value}`;
     if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(preferredTime)) {
       setMessage(formMessage, 'Не вдалося визначити дату та час.', 'error');
@@ -217,7 +244,6 @@
     setMessage(formMessage, 'Надсилаємо заявку…');
 
     try {
-      // Повторно перевіряємо конкретний слот перед відправленням.
       const fresh = await api('/appointments');
       const currentBusy = (Array.isArray(fresh) ? fresh : [])
         .filter(a => !/cancelled|canceled/i.test(String(a.status || '')))
