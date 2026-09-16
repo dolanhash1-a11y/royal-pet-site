@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#07111f">
   <title>Онлайн-запис — Royal Pet</title>
   <link rel="icon" href="../assets/royal-pet-logo.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="booking.css?v=2">
+  <link rel="stylesheet" href="booking.css?v=3">
 </head>
 <body>
   <header class="site-header">
@@ -23,10 +23,10 @@
       <div class="intro">
         <span class="eyebrow">ROYAL PET · ОНЛАЙН-ЗАПИС</span>
         <h1 id="booking-title">Запишіть улюбленця<br><em>на грумінг</em></h1>
-        <p>Оберіть послугу, зручну дату та доступний час. Заявка одразу потрапить у розділ «Записи» кабінету Royal Pet.</p>
+        <p>Оберіть улюбленця, послугу, зручну дату та доступний час. Заявка одразу потрапить у розділ «Записи» кабінету Royal Pet.</p>
         <div class="trust-list" aria-label="Як працює запис">
           <div><span>01</span><p><strong>Розкажіть про улюбленця</strong><small>Ім’я, порода та основна інформація</small></p></div>
-          <div><span>02</span><p><strong>Оберіть послугу та час</strong><small>Графік і зайняті слоти синхронізовані</small></p></div>
+          <div><span>02</span><p><strong>Оберіть послугу та час</strong><small>Послуги беруться зі списку «Запис» у кабінеті</small></p></div>
           <div><span>03</span><p><strong>Надішліть заявку</strong><small>Запис з’явиться у кабінеті Royal Pet</small></p></div>
         </div>
       </div>
@@ -41,11 +41,10 @@
           <label>Ім’я улюбленця<input name="pet_name" required autocomplete="off" placeholder="Наприклад, Боня"></label>
           <label>Вік<input name="pet_age" autocomplete="off" placeholder="Наприклад, 3 роки"></label>
           <label>Порода<select name="breed" id="breed"><option value="">Оберіть породу</option></select></label>
-          <label>Розмір<input name="size" autocomplete="off" placeholder="Маленький / середній / великий"></label>
         </div>
 
         <div class="divider"></div>
-        <div class="form-head compact"><span>Крок 2</span><h2>Оберіть послугу</h2><p>Послуги завантажуються з налаштувань запису Royal Pet.</p></div>
+        <div class="form-head compact"><span>Крок 2</span><h2>Оберіть послугу</h2><p>Тут відображаються активні послуги зі списку «Запис» у кабінеті Royal Pet.</p></div>
         <div class="services" id="services"><div class="loading-state">Завантажуємо послуги…</div></div>
 
         <div class="divider"></div>
@@ -74,6 +73,6 @@
   </main>
 
   <footer><span>Royal Pet</span><span>Професійний догляд для собак та котиків</span></footer>
-  <script src="booking.js?v=2"></script>
+  <script src="booking.js?v=3"></script>
 </body>
 </html>
