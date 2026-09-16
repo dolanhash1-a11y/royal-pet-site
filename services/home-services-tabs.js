@@ -10,119 +10,25 @@ const GROUPS={
 const GROUP_KEYS=Object.keys(GROUPS);
 const esc=v=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[m]));
 const img=v=>{const s=String(v||'');return s.startsWith('/uploads/')?'.'+s:s};
-const price=v=>{
-  const raw=String(v??'').trim().replace(/\s*грн\.?\s*$/i,'').trim();
-  if(!raw)return'Ціна уточнюється';
-  const m=raw.match(/^(\d+(?:[.,]\d+)?)\s*[–—-]\s*(\d+(?:[.,]\d+)?)$/);
-  if(!m)return`${esc(raw)} грн`;
-  const a=Number(m[1].replace(',','.')),b=Number(m[2].replace(',','.'));
-  if(!Number.isFinite(a)||!Number.isFinite(b))return'Ціна уточнюється';
-  return a===b?`${a.toLocaleString('uk-UA')} грн`:`${a.toLocaleString('uk-UA')}–${b.toLocaleString('uk-UA')} грн`;
-};
+const price=v=>{const raw=String(v??'').trim().replace(/\s*грн\.?\s*$/i,'').trim();if(!raw)return'Ціна уточнюється';const m=raw.match(/^(\d+(?:[.,]\d+)?)\s*[–—-]\s*(\d+(?:[.,]\d+)?)$/);if(!m)return`${esc(raw)} грн`;const a=Number(m[1].replace(',','.')),b=Number(m[2].replace(',','.'));if(!Number.isFinite(a)||!Number.isFinite(b))return'Ціна уточнюється';return a===b?`${a.toLocaleString('uk-UA')} грн`:`${a.toLocaleString('uk-UA')}–${b.toLocaleString('uk-UA')} грн`};
 const isCat=x=>['cat','cats','кіт','коти','котики','коты','коти/котики'].includes(String(x?.animal||x?.pet_type||x?.animal_type||x?.type||x?.category||'').trim().toLowerCase());
-const groupOf=x=>{
-  const v=String(x?.group||x?.service_group||x?.subcategory||'').trim().toLowerCase();
-  if(GROUP_KEYS.includes(v))return v;
-  if(['комплекс','грумінг','грумінг / комплекс','комплексний грумінг','грумінг (комплекс)','комплексний грумінг / догляд','повний грумінг'].includes(v))return'complex';
-  if(['гігієна','гігієнічний грумінг','догляд'].includes(v))return'hygiene';
-  if(['адаптивний грумінг','адаптаційний грумінг','адаптація'].includes(v))return'adaptive';
-  if(['додаткові послуги','додатково'].includes(v))return'additional';
-  if(x?.id==='service-1')return'complex';
-  if(['service-2','service-3','service-5'].includes(x?.id))return'hygiene';
-  if(x?.id==='service-4')return'adaptive';
-  return'complex';
-};
-async function loadServices(){
-  if(!API)throw Error('API не налаштований');
-  const r=await fetch(`${API}/public/services?home_tabs=${Date.now()}`,{cache:'no-store'});
-  if(!r.ok)throw Error(`Не вдалося отримати послуги: API ${r.status}`);
-  const data=await r.json();
-  if(!Array.isArray(data))throw Error('API повернув некоректний список послуг');
-  return data.filter(x=>x&&x.active!==false);
-}
-function card(x){
-  return `<article class="home-service-item" data-service-id="${esc(x.id||'')}">
-    ${x.image?`<div class="home-service-thumb"><img src="${esc(img(x.image))}" alt="${esc(x.title||'Royal Pet')}" loading="lazy"></div>`:''}
-    <div class="home-service-body">
-      <div class="home-service-top"><h4>${esc(x.title||'Послуга')}</h4><strong>${price(x.price)}</strong></div>
-      ${x.description?`<p>${esc(x.description)}</p>`:''}
-      ${x.duration?`<small>⏱ ${esc(x.duration)}</small>`:''}
-    </div>
-  </article>`;
-}
-function dogGroup(key,items){
-  const g=GROUPS[key];
-  const arr=[...items].sort((a,b)=>(Number(a.order??a.sort_order)||0)-(Number(b.order??b.sort_order)||0));
-  return `<section class="home-dog-group" data-group="${key}">
-    <button type="button" class="home-dog-group-btn" aria-expanded="false">
-      <span class="home-dog-group-title"><b>${esc(g.title)}</b><small>${esc(g.text)}</small></span>
-      <span class="home-dog-group-count">${arr.length}</span>
-      <span class="home-dog-group-chevron" aria-hidden="true">⌄</span>
-    </button>
-    <div class="home-dog-group-panel" hidden>${arr.length?arr.map(card).join(''):'<div class="home-service-empty">У цій групі поки немає послуг.</div>'}</div>
-  </section>`;
-}
-function renderHome(root,items){
-  const dogs=items.filter(x=>!isCat(x));
-  const cats=items.filter(isCat);
-  const grouped=Object.fromEntries(GROUP_KEYS.map(k=>[k,dogs.filter(x=>groupOf(x)===k)]));
-  root.className='home-animal-services';
-  root.innerHTML=`
-    <div class="home-animal-tabs" role="tablist">
-      <button type="button" class="home-animal-tab active" data-animal="dog" role="tab" aria-selected="true">🐶 Песики</button>
-      <button type="button" class="home-animal-tab" data-animal="cat" role="tab" aria-selected="false">🐱 Котики</button>
-    </div>
-    <div class="home-animal-panel active" data-panel="dog">${GROUP_KEYS.map(k=>dogGroup(k,grouped[k])).join('')}</div>
-    <div class="home-animal-panel" data-panel="cat" hidden>${cats.sort((a,b)=>(Number(a.order??a.sort_order)||0)-(Number(b.order??b.sort_order)||0)).map(card).join('')||'<div class="home-service-empty">Послуг для котиків поки немає.</div>'}</div>`;
-
-  root.querySelectorAll('.home-animal-tab').forEach(tab=>tab.addEventListener('click',()=>{
-    const key=tab.dataset.animal;
-    root.querySelectorAll('.home-animal-tab').forEach(t=>{const on=t===tab;t.classList.toggle('active',on);t.setAttribute('aria-selected',String(on))});
-    root.querySelectorAll('.home-animal-panel').forEach(p=>{p.hidden=p.dataset.panel!==key});
-  }));
-  root.querySelectorAll('.home-dog-group-btn').forEach(btn=>btn.addEventListener('click',()=>{
-    const box=btn.closest('.home-dog-group');
-    const panel=box?.querySelector('.home-dog-group-panel');
-    const open=btn.getAttribute('aria-expanded')==='true';
-    root.querySelectorAll('.home-dog-group-btn').forEach(b=>{
-      b.setAttribute('aria-expanded','false');
-      b.closest('.home-dog-group')?.classList.remove('open');
-      const p=b.closest('.home-dog-group')?.querySelector('.home-dog-group-panel');
-      if(p)p.hidden=true;
-    });
-    if(!open&&panel){btn.setAttribute('aria-expanded','true');box.classList.add('open');panel.hidden=false;}
-  }));
-  root.dataset.homeServicesReady='1';
-}
-function style(){
-  if(document.getElementById('home-services-tabs-style'))return;
-  const s=document.createElement('style');s.id='home-services-tabs-style';
-  s.textContent=`
+const groupOf=x=>{const v=String(x?.group||x?.service_group||x?.subcategory||'').trim().toLowerCase();if(GROUP_KEYS.includes(v))return v;if(['комплекс','грумінг','грумінг / комплекс','комплексний грумінг','грумінг (комплекс)','комплексний грумінг / догляд','повний грумінг'].includes(v))return'complex';if(['гігієна','гігієнічний грумінг','догляд'].includes(v))return'hygiene';if(['адаптивний грумінг','адаптаційний грумінг','адаптація'].includes(v))return'adaptive';if(['додаткові послуги','додатково'].includes(v))return'additional';if(x?.id==='service-1')return'complex';if(['service-2','service-3','service-5'].includes(x?.id))return'hygiene';if(x?.id==='service-4')return'adaptive';return'complex'};
+async function loadServices(){if(!API)throw Error('API не налаштований');const r=await fetch(`${API}/public/services?home_tabs=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw Error(`Не вдалося отримати послуги: API ${r.status}`);const data=await r.json();if(!Array.isArray(data))throw Error('API повернув некоректний список послуг');return data.filter(x=>x&&x.active!==false)}
+function card(x){return `<article class="home-service-item" data-service-id="${esc(x.id||'')}">${x.image?`<div class="home-service-thumb"><img src="${esc(img(x.image))}" alt="${esc(x.title||'Royal Pet')}" loading="lazy"></div>`:''}<div class="home-service-body"><div class="home-service-top"><h4>${esc(x.title||'Послуга')}</h4><strong>${price(x.price)}</strong></div>${x.description?`<p>${esc(x.description)}</p>`:''}${x.duration?`<small>⏱ ${esc(x.duration)}</small>`:''}</div></article>`}
+function dogGroup(key,items){const g=GROUPS[key];const arr=[...items].sort((a,b)=>(Number(a.order??a.sort_order)||0)-(Number(b.order??b.sort_order)||0));return `<section class="home-dog-group" data-group="${key}"><button type="button" class="home-dog-group-btn" aria-expanded="false"><span class="home-dog-group-title"><b>${esc(g.title)}</b><small>${esc(g.text)}</small></span><span class="home-dog-group-count">${arr.length}</span><span class="home-dog-group-chevron" aria-hidden="true">⌄</span></button><div class="home-dog-group-panel" hidden>${arr.length?arr.map(card).join(''):'<div class="home-service-empty">У цій групі поки немає послуг.</div>'}</div></section>`}
+function renderHome(root,items){const dogs=items.filter(x=>!isCat(x));const cats=items.filter(isCat);const grouped=Object.fromEntries(GROUP_KEYS.map(k=>[k,dogs.filter(x=>groupOf(x)===k)]));root.className='home-animal-services';root.innerHTML=`<div class="home-animal-tabs" role="tablist"><button type="button" class="home-animal-tab active" data-animal="dog" role="tab" aria-selected="true">🐶 Песики</button><button type="button" class="home-animal-tab" data-animal="cat" role="tab" aria-selected="false">🐱 Котики</button></div><div class="home-animal-panel active" data-panel="dog">${GROUP_KEYS.map(k=>dogGroup(k,grouped[k])).join('')}</div><div class="home-animal-panel" data-panel="cat" hidden>${cats.sort((a,b)=>(Number(a.order??a.sort_order)||0)-(Number(b.order??b.sort_order)||0)).map(card).join('')||'<div class="home-service-empty">Послуг для котиків поки немає.</div>'}</div>`;root.querySelectorAll('.home-animal-tab').forEach(tab=>tab.addEventListener('click',()=>{const key=tab.dataset.animal;root.querySelectorAll('.home-animal-tab').forEach(t=>{const on=t===tab;t.classList.toggle('active',on);t.setAttribute('aria-selected',String(on))});root.querySelectorAll('.home-animal-panel').forEach(p=>{p.hidden=p.dataset.panel!==key})}));root.querySelectorAll('.home-dog-group-btn').forEach(btn=>btn.addEventListener('click',()=>{const box=btn.closest('.home-dog-group');const panel=box?.querySelector('.home-dog-group-panel');const open=btn.getAttribute('aria-expanded')==='true';root.querySelectorAll('.home-dog-group-btn').forEach(b=>{b.setAttribute('aria-expanded','false');b.closest('.home-dog-group')?.classList.remove('open');const p=b.closest('.home-dog-group')?.querySelector('.home-dog-group-panel');if(p)p.hidden=true});if(!open&&panel){btn.setAttribute('aria-expanded','true');box.classList.add('open');panel.hidden=false}}));root.dataset.homeServicesReady='1'}
+function style(){if(document.getElementById('home-services-tabs-style'))return;const s=document.createElement('style');s.id='home-services-tabs-style';s.textContent=`
 .home-animal-services{display:block!important;min-width:0;color:var(--text)}
 .home-animal-tabs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
 .home-animal-tab{border:1px solid #294866;border-radius:13px;padding:13px 16px;background:linear-gradient(145deg,#0D2744,#07172C);color:#AEBCCE;font:inherit;font-weight:700;cursor:pointer}
 .home-animal-tab.active{background:linear-gradient(145deg,#184574,#0A1D34);border-color:rgba(215,173,85,.58);color:#F2D789;box-shadow:0 12px 28px rgba(0,0,0,.24)}
 .home-animal-panel{display:grid;gap:11px}.home-animal-panel[hidden]{display:none}
-.home-dog-group{border:1px solid rgba(76,113,152,.36);border-radius:16px;background:linear-gradient(145deg,#0E2948,#06182F);overflow:hidden}
-.home-dog-group.open{border-color:rgba(215,173,85,.38)}
-.home-dog-group-btn{appearance:none;width:100%;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;text-align:left;border:0;background:transparent;color:inherit;padding:17px 18px;cursor:pointer}
-.home-dog-group-btn:hover{background:rgba(215,173,85,.045)}.home-dog-group-title{min-width:0}
-.home-dog-group-btn b{display:block;color:#EEF3FA;font-family:'Cormorant Garamond',Georgia,serif;font-size:25px;line-height:1.05}
-.home-dog-group-btn small{display:block;color:#94A8BB;font-size:11px;margin-top:4px}.home-dog-group-count{min-width:31px;height:31px;display:grid;place-items:center;border-radius:999px;background:rgba(215,173,85,.09);border:1px solid rgba(215,173,85,.22);color:#D7AD55;font-size:11px;font-weight:700}.home-dog-group-chevron{color:#D7AD55;font-size:19px;line-height:1;transition:transform .18s ease}.home-dog-group-btn[aria-expanded="true"] .home-dog-group-chevron{transform:rotate(180deg)}
+.home-dog-group{border:1px solid rgba(76,113,152,.36);border-radius:16px;background:linear-gradient(145deg,#0E2948,#06182F);overflow:hidden}.home-dog-group.open{border-color:rgba(215,173,85,.38)}
+.home-dog-group-btn{appearance:none;width:100%;display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:10px;text-align:left;border:0;background:transparent;color:inherit;padding:17px 18px;cursor:pointer}.home-dog-group-btn:hover{background:rgba(215,173,85,.045)}.home-dog-group-title{min-width:0}.home-dog-group-btn b{display:block;color:#EEF3FA;font-family:'Cormorant Garamond',Georgia,serif;font-size:25px;line-height:1.05}.home-dog-group-btn small{display:block;color:#94A8BB;font-size:11px;margin-top:4px}.home-dog-group-count{min-width:31px;height:31px;display:grid;place-items:center;border-radius:999px;background:rgba(215,173,85,.09);border:1px solid rgba(215,173,85,.22);color:#D7AD55;font-size:11px;font-weight:700}.home-dog-group-chevron{color:#D7AD55;font-size:19px;line-height:1;transition:transform .18s ease}.home-dog-group-btn[aria-expanded="true"] .home-dog-group-chevron{transform:rotate(180deg)}
 .home-dog-group-panel{display:grid;gap:9px;padding:10px 11px 11px;border-top:1px solid rgba(74,110,150,.22);background:rgba(3,12,24,.38)}.home-dog-group-panel[hidden]{display:none}
-.home-service-item{display:grid;grid-template-columns:auto 1fr;min-width:0;border:1px solid rgba(78,115,153,.3);border-radius:13px;overflow:hidden;background:linear-gradient(145deg,#112F50,#07182F)}
-.home-service-thumb{width:84px;height:84px;overflow:hidden}.home-service-thumb img{width:100%;height:100%;object-fit:cover;display:block}.home-service-body{min-width:0;padding:12px 14px}.home-service-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}.home-service-body h4{margin:0;color:#F0F4F9;font-family:'Cormorant Garamond',Georgia,serif;font-size:21px;line-height:1.08}.home-service-body strong{color:#F2D789;font-size:12px;white-space:normal;text-align:right}.home-service-body p{margin:6px 0 0;color:#9FB0C1;font-size:12px;line-height:1.45}.home-service-body small{display:block;margin-top:6px;color:#8EA0B2;font-size:11px}.home-service-empty{padding:20px;text-align:center;color:#8EA0B2;border:1px dashed rgba(215,173,85,.18);border-radius:13px}
-@media(max-width:650px){.home-animal-tabs{margin-bottom:14px}.home-animal-tab{padding:12px 10px}.home-dog-group-btn{padding:14px}.home-dog-group-btn b{font-size:22px}.home-dog-group-btn small{font-size:10px}.home-service-item{grid-template-columns:70px 1fr}.home-service-thumb{width:70px;height:70px}.home-service-top{grid-template-columns:1fr}.home-service-body strong{display:block;text-align:left;margin-top:5px}.home-service-body h4{font-size:20px}.home-service-body{padding:11px 12px}}
-`;
-  document.head.appendChild(s);
-}
-async function run(){
-  if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('/index.html'))return;
-  const root=document.querySelector('[data-services]');if(!root)return;
-  style();
-  root.dataset.homeServicesStatus='loading';
-  try{const items=await loadServices();renderHome(root,items);}
-  catch(e){console.error('[Royal Pet] services',e);root.innerHTML='<div class="home-service-empty">Не вдалося завантажити актуальні ціни. Спробуйте оновити сторінку.</div>';root.dataset.homeServicesStatus='error';}
-}
+.home-service-item{display:grid;grid-template-columns:auto 1fr;min-width:0;border:1px solid rgba(78,115,153,.3);border-radius:13px;overflow:hidden;background:linear-gradient(145deg,#112F50,#07182F)}.home-service-thumb{width:84px;height:84px;overflow:hidden}.home-service-thumb img{width:100%;height:100%;object-fit:cover;display:block}.home-service-body{min-width:0;padding:12px 14px}.home-service-top{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}.home-service-body h4{margin:0;color:#F0F4F9;font-family:'Cormorant Garamond',Georgia,serif;font-size:21px;line-height:1.08}.home-service-body strong{color:#F2D789;font-size:12px;white-space:normal;text-align:right}.home-service-body p{margin:6px 0 0;color:#9FB0C1;font-size:12px;line-height:1.45}.home-service-body small{display:block;margin-top:6px;color:#8EA0B2;font-size:11px}.home-service-empty{padding:20px;text-align:center;color:#8EA0B2;border:1px dashed rgba(215,173,85,.18);border-radius:13px}
+@media(max-width:650px){.home-animal-tabs{margin-bottom:14px}.home-animal-tab{padding:12px 10px}.home-dog-group-btn{padding:14px}.home-dog-group-btn b{font-size:22px}.home-dog-group-btn small{font-size:10px}.home-service-item{grid-template-columns:70px 1fr}.home-service-thumb{width:70px;height:70px}.home-service-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.home-service-body h4{font-size:20px;min-width:0;flex:1;text-align:left}.home-service-body strong{display:block;flex:0 0 auto;text-align:right;margin-top:0;white-space:nowrap}.home-service-body{padding:11px 12px}}
+`;document.head.appendChild(s)}
+async function run(){if(!location.pathname.endsWith('/')&&!location.pathname.endsWith('/index.html'))return;const root=document.querySelector('[data-services]');if(!root)return;style();root.dataset.homeServicesStatus='loading';try{const items=await loadServices();renderHome(root,items)}catch(e){console.error('[Royal Pet] services',e);root.innerHTML='<div class="home-service-empty">Не вдалося завантажити актуальні ціни. Спробуйте оновити сторінку.</div>';root.dataset.homeServicesStatus='error'}}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
