@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Royal Pet — запис на грумінг для собак та котиків.">
-  <title>Запис на грумінг — Royal Pet</title>
-  <link rel="icon" href="../assets/royal-pet-logo.png">
-  <link rel="stylesheet" href="booking.css">
+  <meta name="description" content="Royal Pet — онлайн-запис на грумінг для собак та котиків.">
+  <meta name="theme-color" content="#07111f">
+  <title>Онлайн-запис — Royal Pet</title>
+  <link rel="icon" href="../assets/royal-pet-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="booking.css?v=2">
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="../" aria-label="Royal Pet — на головну">
-      <img src="../assets/royal-pet-logo.png" alt="Royal Pet">
+      <img src="../assets/royal-pet-logo.svg" alt="Royal Pet" width="44" height="44">
       <span>Royal Pet</span>
     </a>
-    <a class="back-link" href="../">← На головну</a>
+    <a class="back-link" href="../" aria-label="Повернутися на головну">← На головну</a>
   </header>
 
   <main class="page">
@@ -23,50 +24,32 @@
         <span class="eyebrow">ROYAL PET · ОНЛАЙН-ЗАПИС</span>
         <h1 id="booking-title">Запишіть улюбленця<br><em>на грумінг</em></h1>
         <p>Оберіть послугу, зручну дату та доступний час. Заявка одразу потрапить у розділ «Записи» кабінету Royal Pet.</p>
-
-        <div class="trust-list">
-          <div><span>01</span><p><strong>Оберіть улюбленця</strong><small>Розкажіть нам трохи про нього</small></p></div>
-          <div><span>02</span><p><strong>Оберіть послугу та час</strong><small>Доступність синхронізована з кабінетом</small></p></div>
-          <div><span>03</span><p><strong>Отримайте підтвердження</strong><small>Заявка з’явиться у розділі «Записи»</small></p></div>
+        <div class="trust-list" aria-label="Як працює запис">
+          <div><span>01</span><p><strong>Розкажіть про улюбленця</strong><small>Ім’я, порода та основна інформація</small></p></div>
+          <div><span>02</span><p><strong>Оберіть послугу та час</strong><small>Графік і зайняті слоти синхронізовані</small></p></div>
+          <div><span>03</span><p><strong>Надішліть заявку</strong><small>Запис з’явиться у кабінеті Royal Pet</small></p></div>
         </div>
       </div>
 
       <form id="booking-form" class="form-card" novalidate>
-        <div class="form-head">
-          <span>Крок 1</span>
-          <h2>Розкажіть про улюбленця</h2>
-        </div>
-
+        <div class="form-head"><span>Крок 1</span><h2>Ваш улюбленець</h2></div>
         <div class="pet-type" role="group" aria-label="Вид тварини">
           <label class="type-option"><input type="radio" name="pet_type" value="Собака" checked><span>🐶<b>Собака</b></span></label>
           <label class="type-option"><input type="radio" name="pet_type" value="Кіт"><span>🐱<b>Кіт</b></span></label>
         </div>
-
         <div class="fields">
-          <label>Ім’я улюбленця<input name="pet_name" required placeholder="Наприклад, Боня"></label>
-          <label>Вік<input name="pet_age" placeholder="Наприклад, 3 роки"></label>
+          <label>Ім’я улюбленця<input name="pet_name" required autocomplete="off" placeholder="Наприклад, Боня"></label>
+          <label>Вік<input name="pet_age" autocomplete="off" placeholder="Наприклад, 3 роки"></label>
           <label>Порода<select name="breed" id="breed"><option value="">Оберіть породу</option></select></label>
-          <label>Розмір<input name="size" placeholder="Маленький / середній / великий"></label>
+          <label>Розмір<input name="size" autocomplete="off" placeholder="Маленький / середній / великий"></label>
         </div>
 
         <div class="divider"></div>
-
-        <div class="form-head compact">
-          <span>Крок 2</span>
-          <h2>Оберіть послугу</h2>
-          <p>Список синхронізований з налаштуваннями «Запис» у кабінеті.</p>
-        </div>
-        <div class="services" id="services">
-          <div class="loading-state">Завантажуємо послуги…</div>
-        </div>
+        <div class="form-head compact"><span>Крок 2</span><h2>Оберіть послугу</h2><p>Послуги завантажуються з налаштувань запису Royal Pet.</p></div>
+        <div class="services" id="services"><div class="loading-state">Завантажуємо послуги…</div></div>
 
         <div class="divider"></div>
-
-        <div class="form-head compact">
-          <span>Крок 3</span>
-          <h2>Оберіть дату та час</h2>
-          <p>Показуємо лише час у межах робочого графіка та без уже зайнятих записів.</p>
-        </div>
+        <div class="form-head compact"><span>Крок 3</span><h2>Дата та час</h2><p>Показуємо час у межах робочого графіка та без зайнятих записів.</p></div>
         <div class="fields booking-datetime">
           <label>Дата<input name="date" id="booking-date" type="date" required></label>
           <label>Час<select name="time" id="booking-time" required><option value="">Спочатку оберіть дату</option></select></label>
@@ -74,17 +57,12 @@
         <div id="availability-message" class="message" aria-live="polite"></div>
 
         <div class="divider"></div>
-
-        <div class="form-head compact">
-          <span>Крок 4</span>
-          <h2>Ваші контакти</h2>
-        </div>
+        <div class="form-head compact"><span>Крок 4</span><h2>Ваші контакти</h2></div>
         <div class="fields">
-          <label>Ваше ім’я<input name="owner_name" required placeholder="Як до вас звертатися"></label>
-          <label>Номер телефону<input name="phone" type="tel" required placeholder="+380 __ ___ __ __"></label>
+          <label>Ваше ім’я<input name="owner_name" required autocomplete="name" placeholder="Як до вас звертатися"></label>
+          <label>Номер телефону<input name="phone" type="tel" required autocomplete="tel" inputmode="tel" placeholder="+380 __ ___ __ __"></label>
         </div>
-
-        <label class="full-field">Побажання або особливості улюбленця<textarea name="comment" rows="4" placeholder="Розкажіть, якщо є важливі особливості, страхи, побажання тощо"></textarea></label>
+        <label class="full-field">Побажання або особливості<textarea name="comment" rows="4" placeholder="Важливі особливості, страхи, побажання тощо"></textarea></label>
 
         <div class="form-footer">
           <p>Надсилаючи заявку, ви погоджуєтесь на зв’язок для підтвердження запису.</p>
@@ -96,7 +74,6 @@
   </main>
 
   <footer><span>Royal Pet</span><span>Професійний догляд для собак та котиків</span></footer>
-
-  <script src="booking.js?v=1"></script>
+  <script src="booking.js?v=2"></script>
 </body>
 </html>
