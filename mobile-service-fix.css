@@ -1,0 +1,6 @@
+@media (max-width:650px){
+  .home-service-item .home-service-body{min-width:0!important;width:auto!important;display:block!important;}
+  .home-service-item .home-service-top{display:flex!important;flex-direction:column!important;align-items:stretch!important;width:100%!important;min-width:0!important;gap:7px!important;}
+  .home-service-item .home-service-body h4{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important;text-align:right!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;word-break:normal!important;overflow-wrap:normal!important;line-break:auto!important;writing-mode:horizontal-tb!important;}
+  .home-service-item .home-service-price{display:inline-flex!important;align-self:flex-end!important;width:max-content!important;max-width:100%!important;white-space:nowrap!important;}
+}
